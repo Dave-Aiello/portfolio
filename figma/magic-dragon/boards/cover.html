@@ -37,7 +37,8 @@ html,body{width:1920px;height:960px;overflow:hidden;background:#F7F6F3}
 (async function () {
   const h = await window.harvest();
   const mk = h.find("img.mk");
-  document.getElementById("mark").src = mk ? mk.src : h.P + "assets/brand/dragon-no-smoke-flat.png";
+  /* the regular mark (vector), so it stays sharp at cover size */
+  document.getElementById("mark").src = h.asset("brand/mark/dragon-mark.svg");
   const man = await fetch(h.P + "assets/manifest.json").then((r) => r.json()).catch(() => ({}));
   document.getElementById("icon").src = h.P + "assets/" + (man["brand/app-icon.png"] || "brand/app-icon.png");
   await h.settle();

@@ -46,11 +46,13 @@ html,body{width:3800px;height:2300px;overflow:hidden;background:#F7F6F3}
 <script src="harvest.js"></script>
 <script>
 /* splash timing, from the reference build (seconds) */
-const T = { draw: 1.3, redraw: 2.6, rest: 0.35, fadeBack: 0.6, ghost: 0.16, fill: 0.4, linesDelay: 0.08, linesOut: 0.42, wordDelay: 0.2, word: 0.4, rise: 8, hold: 0.6, handoff: 0.45 };
-const FINISH = Math.max(T.fill, T.linesDelay + T.linesOut, T.wordDelay + T.word) + T.hold;   /* 1.2 s: 1.3 to 2.5 s on a fast load */
-const POSTERS = [[0, "Blank canvas"], [400, "Head and back wing"], [800, "Wings, tail and body"], [1180, "Everything but the eyes"], [1300, "Eyes last: all 14 strokes"], [1600, "Fill in, lines fading, wordmark rising"], [1900, "Final frame, held to 2.5 s; also the Reduce Motion frame"]];
+/* The animation ends on the mark itself: the tint fades in under the lines, which stay
+   at full strength. There is no dark fill and the lines never fade out. */
+const T = { draw: 1.3, redraw: 2.6, rest: 0.35, fadeBack: 0.6, ghost: 0.16, tint: 0.4, wordDelay: 0.2, word: 0.4, rise: 8, hold: 0.6, handoff: 0.45 };
+const FINISH = Math.max(T.tint, T.wordDelay + T.word) + T.hold;   /* 1.2 s: 1.3 to 2.5 s on a fast load */
+const POSTERS = [[0, "Blank canvas"], [400, "Head and back wing"], [800, "Wings, tail and body"], [1180, "Everything but the eyes"], [1300, "Eyes last: all 14 strokes"], [1550, "Tint fading in under the lines, wordmark rising"], [1900, "Final frame: the mark, held to 2.5 s; also the Reduce Motion frame"]];
 const clamp = (v) => Math.max(0, Math.min(1, v));
-const ease = (x) => (1 - Math.cos(Math.PI * clamp(x))) / 2;              /* fill, lines, fade-back, cross-fades */
+const ease = (x) => (1 - Math.cos(Math.PI * clamp(x))) / 2;              /* tint, fade-back, cross-fades */
 const out3 = (x) => 1 - Math.pow(1 - clamp(x), 3);                         /* wordmark */
 const pen = (x) => { x = clamp(x); return 0.25 * x + 0.75 * (1 - Math.cos(Math.PI * x)) / 2; };
 const inOutCubic = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
@@ -61,9 +63,9 @@ const r2 = (n) => Math.round(n * 100) / 100;
 /* fast load (the menu is ready within the first pass) */
 function fastState(t) {
   const s = t / 1000;
-  if (s < T.draw) return { u: s / T.draw, ink: 1, ghost: 0, lines: 1, fill: 0, word: 0 };
+  if (s < T.draw) return { u: s / T.draw, ink: 1, ghost: 0, tint: 0, word: 0 };
   const k = Math.min(s - T.draw, FINISH);
-  return { u: 1, ink: 1, ghost: 0, fill: ease(k / T.fill), lines: 1 - ease((k - T.linesDelay) / T.linesOut), word: out3((k - T.wordDelay) / T.word) };
+  return { u: 1, ink: 1, ghost: 0, tint: ease(k / T.tint), word: out3((k - T.wordDelay) / T.word) };
 }
 
 /* ---- the finished line art: absolute M/C/Z paths, cut exactly with de Casteljau */
@@ -148,19 +150,27 @@ function cutPolyline(s, f) {
   return out.length > 1 ? "M" + out.map((p) => r2(p[0]) + " " + r2(p[1])).join("L") : "";
 }
 
-/* the line art at one moment: a ghost layer (all strokes) under the ink layer (strokes cut at u) */
+/* The mark at one moment, bottom to top: the tint (body, foot, belly), a ghost layer with
+   all 14 strokes, and the ink layer with each stroke cut where the pen is. The SVG uses the
+   mark's own viewBox, so `size` is the mark's full width, strokes included (88 pt on launch). */
+function viewBoxOf(art) { return art.mark && art.mark.viewBox ? art.mark.viewBox : [-2, -2, art.width + 4, art.height + 4]; }
+function markHeight(art, size) { const vb = viewBoxOf(art); return r2(size * vb[3] / vb[2]); }
 function lineSvg(strokes, st, size, art, x0, y0) {
-  const W = art.width, H = art.height, sw = art.stroke, color = art.color;
-  const m = 2, k = size / W;   /* 2-unit margin, as in dragon-line.svg, so round caps aren't clipped */
+  const vb = viewBoxOf(art), sw = art.stroke;
+  const colors = (art.mark && art.mark.colors) || { line: art.color, body: "#CFC0DF", belly: "#EFE8F7" };
   let paths = "";
-  const ghostA = r2(st.ghost * st.lines), inkA = r2(st.ink * st.lines);
-  if (ghostA > 0) strokes.forEach((s) => { paths += '<path d="' + s.d + '" fill="none" stroke="' + color + '" stroke-opacity="' + ghostA + '" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round"/>'; });
+  const tintA = r2(st.tint || 0), ghostA = r2(st.ghost || 0), inkA = r2(st.ink || 0);
+  if (tintA > 0) (art.tints || []).forEach((t) => {
+    const fill = /belly/.test(t.role || t.id) ? colors.belly : colors.body;
+    paths += '<path d="' + t.d + '" fill="' + fill + '"' + (tintA < 1 ? ' fill-opacity="' + tintA + '"' : "") + ' stroke="none"/>';
+  });
+  if (ghostA > 0) strokes.forEach((s) => { paths += '<path d="' + s.d + '" fill="none" stroke="' + colors.line + '" stroke-opacity="' + ghostA + '" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round"/>'; });
   if (inkA > 0) strokes.forEach((s) => {
     const f = st.u <= s.start ? 0 : pen((st.u - s.start) / s.dur);
     const d = cut(s, f);
-    if (d) paths += '<path d="' + d + '" fill="none" stroke="' + color + '"' + (inkA < 1 ? ' stroke-opacity="' + inkA + '"' : "") + ' stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round"/>';
+    if (d) paths += '<path d="' + d + '" fill="none" stroke="' + colors.line + '"' + (inkA < 1 ? ' stroke-opacity="' + inkA + '"' : "") + ' stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round"/>';
   });
-  return paths ? '<svg aria-label="Line art" style="position:absolute;left:' + r2((x0 || 0) - m * k) + "px;top:" + r2((y0 || 0) - m * k) + 'px" width="' + r2((W + 2 * m) * k) + '" height="' + r2((H + 2 * m) * k) + '" viewBox="' + -m + " " + -m + " " + r2(W + 2 * m) + " " + r2(H + 2 * m) + '">' + paths + "</svg>" : "";
+  return paths ? '<svg aria-label="Mark" style="position:absolute;left:' + r2(x0 || 0) + "px;top:" + r2(y0 || 0) + 'px" width="' + size + '" height="' + markHeight(art, size) + '" viewBox="' + vb.join(" ") + '">' + paths + "</svg>" : "";
 }
 
 function annotation(title, rows, style) {
@@ -173,7 +183,6 @@ function annotation(title, rows, style) {
   const launch = h.find(".launch-mark");
   const sb = h.find(".sb"), hi = h.find(".hi");
   const marker = h.asset("brand/driver-marker-26pt@8x.png");
-  const markSrc = launch.querySelector("img").src;
 
   /* the finished line art, or a traced fallback */
   let art = await fetch(h.asset("brand/dragon-line.json")).then((r) => (r.ok ? r.json() : null)).catch(() => null);
@@ -195,11 +204,10 @@ function annotation(title, rows, style) {
     const scr = el('<div class="screen" data-frame data-name="Splash ' + t + ' ms" style="position:absolute;left:' + x + 'px;top:0"></div>');
     scr.appendChild(h.copy(sb));
     const m = h.copy(launch);
+    /* the launch mark image is replaced by the animated mark at the same size and place */
     const img = m.querySelector("img");
-    const wrap = el('<div class="mark-wrap"></div>');
+    const wrap = el('<div class="mark-wrap" style="height:' + markHeight(art, 88) + 'px"></div>');
     img.replaceWith(wrap);
-    wrap.appendChild(img);
-    img.style.opacity = String(r2(st.fill));
     wrap.insertAdjacentHTML("beforeend", lineSvg(strokes, st, 88, art));
     const wm = m.querySelector(".wm");
     if (wm) { wm.style.opacity = String(r2(st.word)); wm.style.transform = "translateY(" + (T.rise * (1 - st.word)).toFixed(2) + "px)"; }
@@ -210,19 +218,23 @@ function annotation(title, rows, style) {
   });
   s1.appendChild(annotation("Splash: hand-drawn dragon", [
     ["Line", "14 strokes in drawing order, head first, eyes last (" + eyesAt.toFixed(2) + " to 1.3 s); 0 to 1.3 s"],
-    ["Pen", "Each stroke eases in and out, with slight overlaps after a pen lift. 3.5 pt on the 176 pt artwork (1.75 pt at the 88 pt mark), round caps"],
-    ["Fill", "The purple mark fades in from 1.3 to 1.7 s while the lines fade out from 1.38 to 1.8 s"],
+    ["Pen", "Each stroke eases in and out, with slight overlaps after a pen lift. 3.5 per 176 of dragon (about 1.75 pt at the 88 pt mark), round caps"],
+    ["Tint", "The lavender body and foot (#CFC0DF) and faint belly (#EFE8F7) fade in under the lines, 1.3 to 1.7 s, and stay"],
+    ["End state", "The lines stay at full strength and there is no dark fill: the last frame is the mark itself"],
     ["Wordmark", "Fades in and rises 8 pt, 1.5 to 1.9 s; the screen holds until 2.5 s"],
     ["Fast load", "Cross-fades into Home, 2.5 to 2.95 s"],
-    ["Slow load", "Lines rest 0.35 s, fade to a 16% ghost over 0.6 s and redraw over 2.6 s, looping until the menu arrives, then finish from the pen's position"],
+    ["Slow load", "Lines rest 0.35 s, fade to a 16% ghost over 0.6 s and redraw over 2.6 s, looping until the menu arrives, then finish from the pen's position and end on the same tinted mark"],
     ["Reduce Motion", "Shows the final frame, then the same cross-fade into Home"]
   ], "left:3060px;top:0"));
 
   const tl = el('<div class="timeline" data-name="Timeline, fast load" style="left:0;top:990px"><div class="t-h2" style="margin-bottom:14px">Timeline, fast load</div></div>');
   const span = 3000, tw = 1430;
-  const rows = [["Line draws", [0, 1300], ""], ["Eyes", [Math.round(eyesAt * 1000), 1300], ""], ["Fill fades in", [1300, 1700], "soft"], ["Lines fade out", [1380, 1800], "pale"], ["Wordmark rises 8 pt", [1500, 1900], "soft"], ["Hold", [1900, 2500], "pale"], ["Cross-fade to Home", [2500, 2950], "grey"]];
-  for (const [label, [a, b], cls] of rows) {
-    tl.appendChild(el('<div class="tl-row"><div class="tl-label t-body">' + label + '</div><div class="tl-track"><div class="tl-bar ' + cls + '" style="left:' + (a / span * tw).toFixed(1) + "px;width:" + ((b - a) / span * tw).toFixed(1) + 'px"></div></div></div>'));
+  /* each row: label, then bars [start, end, style]; the tint fades in, then stays */
+  const rows = [["Line draws", [[0, 1300, ""]]], ["Eyes", [[Math.round(eyesAt * 1000), 1300, ""]]], ["Tint fades in, then stays", [[1300, 1700, "soft"], [1700, 2950, "pale"]]],
+    ["Lines", [[0, 2950, "pale"]]], ["Wordmark rises 8 pt", [[1500, 1900, "soft"]]], ["Hold", [[1900, 2500, "pale"]]], ["Cross-fade to Home", [[2500, 2950, "grey"]]]];
+  for (const [label, bars] of rows) {
+    tl.appendChild(el('<div class="tl-row"><div class="tl-label t-body">' + label + '</div><div class="tl-track">' +
+      bars.map(([a, b, cls]) => '<div class="tl-bar ' + cls + '" style="left:' + (a / span * tw).toFixed(1) + "px;width:" + ((b - a) / span * tw).toFixed(1) + 'px"></div>').join("") + "</div></div>"));
   }
   const axis = el('<div class="tl-axis"></div>');
   for (let t = 0; t <= span; t += 500) axis.appendChild(el('<div class="tl-tick t-sub" style="left:' + (t / span * tw).toFixed(1) + 'px">' + (t / 1000).toFixed(1) + " s</div>"));
@@ -232,17 +244,16 @@ function annotation(title, rows, style) {
   /* slow load, at 2x: rest, ghost, redraw over the ghost, the menu arrives */
   s1.appendChild(el('<div class="t-h2" style="position:absolute;left:1800px;top:990px">Slow load, up close</div>'));
   const slow = [
-    [{ u: 1, ink: 1, ghost: 0, lines: 1, fill: 0 }, "Drawn, resting 0.35 s"],
-    [{ u: 0, ink: 0, ghost: T.ghost, lines: 1, fill: 0 }, "Faded to a 16% ghost, 0.6 s"],
-    [{ u: 0.45, ink: 1, ghost: T.ghost, lines: 1, fill: 0 }, "Redrawing over the ghost, 2.6 s a pass"],
-    [{ u: 0.8, ink: 1, ghost: T.ghost, lines: 1, fill: 0 }, "Menu arrives: the pen speeds up and finishes"],
-    [{ u: 1, ink: 1, ghost: 0, lines: 0.5, fill: 0.85 }, "Then the same finish as a fast load"]
+    [{ u: 1, ink: 1, ghost: 0, tint: 0 }, "Drawn, resting 0.35 s"],
+    [{ u: 0, ink: 0, ghost: T.ghost, tint: 0 }, "Faded to a 16% ghost, 0.6 s"],
+    [{ u: 0.45, ink: 1, ghost: T.ghost, tint: 0 }, "Redrawing over the ghost, 2.6 s a pass"],
+    [{ u: 0.8, ink: 1, ghost: T.ghost, tint: 0 }, "Menu arrives: the pen speeds up and finishes"],
+    [{ u: 1, ink: 1, ghost: 0, tint: 1 }, "Then the same tinted mark as a fast load"]
   ];
   slow.forEach(([st, label], i) => {
-    const x = 1800 + i * 236, size = 176, top = ((216 - size * art.height / art.width) / 2).toFixed(2);
+    const x = 1800 + i * 236, size = 180, top = r2((216 - markHeight(art, size)) / 2);
     const tile = el('<div class="poster" data-frame data-name="Slow load ' + (i + 1) + '" style="left:' + x + 'px;top:1030px;width:216px;height:216px;background:#F7F6F3"></div>');
-    if (st.fill > 0) tile.appendChild(el('<img src="' + markSrc + '" alt="" style="position:absolute;left:20px;top:' + top + 'px;width:' + size + 'px;opacity:' + st.fill + '">'));
-    const svg = lineSvg(strokes, st, size, art, 20, +top);
+    const svg = lineSvg(strokes, st, size, art, 18, top);
     if (svg) tile.insertAdjacentHTML("beforeend", svg);
     s1.appendChild(tile);
     s1.appendChild(el('<div class="cap t-sub" style="left:' + x + 'px;top:1256px;width:216px">' + label + "</div>"));

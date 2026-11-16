@@ -353,6 +353,21 @@
     const cb = contentBox(el, cs, r);
     if (cb.width < 0.5 || cb.height < 0.5) return [];
     const src = el.currentSrc || el.src;
+    /* an SVG image (the dragon mark) comes across as vectors, not pixels */
+    const svgText = window.__svgText && window.__svgText[src];
+    if (svgText && (!cs.filter || cs.filter === "none")) {
+      const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
+      const s = doc.documentElement;
+      if (s && s.tagName.toLowerCase() === "svg" && !doc.querySelector("parsererror")) {
+        s.querySelectorAll("title,desc,metadata").forEach((t) => t.remove());
+        (function strip(n) { [...n.childNodes].forEach((c) => { if (c.nodeType === 8) c.remove(); else if (c.nodeType === 1) strip(c); }); })(s);
+        if (!s.getAttribute("viewBox")) s.setAttribute("viewBox", "0 0 " + (parseFloat(s.getAttribute("width")) || cb.width) + " " + (parseFloat(s.getAttribute("height")) || cb.height));
+        s.setAttribute("width", cb.width);
+        s.setAttribute("height", cb.height);
+        return [{ type: "svg", name: el.alt ? el.alt + " mark" : "Mark", x: cb.left - base.left, y: cb.top - base.top, w: cb.width, h: cb.height,
+          svg: new XMLSerializer().serializeToString(s), opacity: px(cs.opacity) }];
+      }
+    }
     const pad = [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].map(px);
     const padded = pad.some((v) => v > 0) && (cs.objectFit === "contain" || cs.objectFit === "scale-down") && (!cs.filter || cs.filter === "none");
     /* a padded cut-out keeps its full box; the padding is baked into the embedded image,

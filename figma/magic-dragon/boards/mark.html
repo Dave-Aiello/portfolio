@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Magic Dragon mark</title>
+<!-- The "Mark" section at the top of the Design system page. The marks are the SVG files
+     in assets/brand/mark/, so they arrive in Figma as vectors. Class names start with mk-
+     so they can't collide with Gallery's own classes (.tile, .chips). -->
+<link rel="stylesheet" href="../../../prototype/magic-dragon/src/shared/base.css">
+<link rel="stylesheet" href="../../../prototype/magic-dragon/src/gallery/styles.css">
+<style>
+html,body{width:1800px;height:700px;overflow:hidden;background:#FFFFFF}
+.board-section{position:absolute;left:0;top:0;width:1640px;height:470px}
+.mk-tile{position:absolute;top:0;border-radius:16px;background:var(--canvas);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:28px;overflow:hidden}
+.mk-cap{position:absolute;top:0}
+.mk-cap .t-body{margin-top:4px;color:var(--ink2)}
+.mk-colours{position:absolute;left:1180px;top:0;width:460px}
+.mk-row{display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--line)}
+.mk-sw{width:56px;height:56px;border-radius:12px;flex:none;box-shadow:inset 0 0 0 1px rgba(22,19,27,.08)}
+.mk-colours .t-body{color:var(--ink2)}
+</style>
+</head>
+<body>
+<section class="board-section" data-name="Mark">
+  <div class="mk-tile" data-frame data-name="Mark, regular" style="left:0;width:400px;height:360px"><img id="regular" alt="Magic Dragon" style="width:220px"></div>
+  <div class="mk-cap" style="left:0;top:384px;width:400px"><div class="t-head">Regular</div><div class="t-body">33 pt and up. Line 3.5 per 176 of dragon, round caps and joins.</div></div>
+
+  <div class="mk-tile" data-frame data-name="Mark, 88 pt" style="left:432px;width:300px;height:360px"><img id="launch" alt="Magic Dragon" style="width:88px"></div>
+  <div class="mk-cap" style="left:432px;top:384px;width:300px"><div class="t-head">88 pt</div><div class="t-body">The launch screen, and where the splash animation ends.</div></div>
+
+  <div class="mk-tile" data-frame data-name="Mark, small" style="left:764px;width:380px;height:360px"><img id="small32" alt="Magic Dragon" style="width:32px"><img id="small24" alt="Magic Dragon" style="width:24px"></div>
+  <div class="mk-cap" style="left:764px;top:384px;width:380px"><div class="t-head">Small, 32 and 24 pt</div><div class="t-body">32 pt and below, like the Home top bar. The line is heavier, 8.5 per 176, so it holds up.</div></div>
+
+  <div class="mk-colours">
+    <div class="t-head" style="margin-bottom:16px">Mark colours</div>
+    <div class="mk-row"><div class="mk-sw" style="background:#4B0D83"></div><div><div class="t-head">Line</div><div class="t-body">#4B0D83, Brand/Purple</div></div></div>
+    <div class="mk-row"><div class="mk-sw" style="background:#CFC0DF"></div><div><div class="t-head">Body and foot</div><div class="t-body">#CFC0DF, Brand/Mark body</div></div></div>
+    <div class="mk-row"><div class="mk-sw" style="background:#EFE8F7"></div><div><div class="t-head">Belly</div><div class="t-body">#EFE8F7, Brand/Mark belly</div></div></div>
+    <div class="t-body" style="margin-top:14px">No dark fill: the tint sits under full-strength lines, and the splash ends on exactly this mark.</div>
+  </div>
+</section>
+<script src="harvest.js"></script>
+<script>
+(async function () {
+  const h = await window.harvest();
+  for (const [id, file] of [["regular", "dragon-mark.svg"], ["launch", "dragon-mark.svg"], ["small32", "dragon-mark-small.svg"], ["small24", "dragon-mark-small.svg"]]) document.getElementById(id).src = h.asset("brand/mark/" + file);
+  await h.settle();
+  window.__ready = true;
+})();
+</script>
+</body></html>

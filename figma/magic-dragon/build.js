@@ -42,6 +42,19 @@ async function ready(page) {
   await page.waitForTimeout(80);
 }
 
+/* Load the serializer, plus the source of every SVG image on the page, so the
+   dragon mark can be drawn in Figma as vectors rather than pixels. */
+async function inject(page) {
+  await page.addScriptTag({ path: SERIALIZER });
+  await page.evaluate(async () => {
+    window.__svgText = window.__svgText || {};
+    for (const img of document.images) {
+      const src = img.currentSrc || img.src;
+      if (/\.svg(\?|#|$)/i.test(src) && !window.__svgText[src]) window.__svgText[src] = await fetch(src).then((r) => r.text()).catch(() => null);
+    }
+  });
+}
+
 let pageSeq = 0;
 const bakes = {};
 async function grab(page, selector, index, opt) {
@@ -114,7 +127,7 @@ async function readAll() {
     const id = file.replace(/^\d+[-_]?/, "");
     await page.goto(srv.url + "/prototype/magic-dragon/src/gallery/" + f, { waitUntil: "networkidle" });
     await ready(page);
-    await page.addScriptTag({ path: SERIALIZER });
+    await inject(page);
     if (!cssVars) {
       cssVars = await page.evaluate(() => {
         const out = {};
@@ -137,7 +150,7 @@ async function readAll() {
   await page.goto(srv.url + "/figma/magic-dragon/boards/components.html", { waitUntil: "networkidle" });
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
   await ready(page);
-  await page.addScriptTag({ path: SERIALIZER });
+  await inject(page);
   const count = await page.evaluate(() => document.querySelectorAll("[data-comp]").length);
   const components = [];
   for (let i = 0; i < count; i++) {
@@ -147,12 +160,12 @@ async function readAll() {
   }
 
   const boards = {};
-  for (const [name, file, vw, vh] of [["cover", "cover.html", 1920, 960], ["motion", "motion.html", 3800, 2300]]) {
+  for (const [name, file, vw, vh] of [["cover", "cover.html", 1920, 960], ["mark", "mark.html", 1800, 700], ["motion", "motion.html", 3800, 2300]]) {
     await page.setViewportSize({ width: vw, height: vh });
     await page.goto(srv.url + "/figma/magic-dragon/boards/" + file, { waitUntil: "networkidle" });
     await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
     await ready(page);
-    await page.addScriptTag({ path: SERIALIZER });
+    await inject(page);
     const secs = await page.evaluate(() => [...document.querySelectorAll("section.board-section")].map((s) => {
       const r = s.getBoundingClientRect();
       return { name: s.dataset.name, bare: s.hasAttribute("data-bare"), x: r.left, y: r.top, w: r.width, h: r.height };
@@ -483,7 +496,7 @@ function round(key, v) {
   const autos = [];
   for (const s of screens) {
     const to = s.after && resolve(s.after.to);
-    if (to) autos.push({ from: s.id, to, seconds: Math.round((s.after.ms || 1800) / 100) / 10 });
+    if (to) autos.push({ from: s.id, to, seconds: Math.round((s.after.ms || 1800) / 10) / 100 });
     else if (s.rootGo && resolve(s.rootGo)) autos.push({ from: s.id, to: resolve(s.rootGo), seconds: config.flow.autoAdvanceSeconds });
   }
   if (!autos.some((a) => a.from === start) && !hasLink && screens.length > 1) autos.push({ from: start, to: screens[screens.indexOf(startScreen) + 1].id, seconds: config.flow.autoAdvanceSeconds });

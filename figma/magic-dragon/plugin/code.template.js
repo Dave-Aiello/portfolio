@@ -220,6 +220,7 @@ function makeSvg(n, parent) {
   parent.appendChild(s);
   s.name = n.name || "Icon";
   s.clipsContent = true;
+  if (n.opacity !== undefined && n.opacity < 1) s.opacity = n.opacity;
   s.x = n.x;
   s.y = n.y;
   return s;
@@ -408,16 +409,16 @@ async function buildScreens(page) {
   return sections;
 }
 
-async function buildBoard(page, board) {
+async function buildBoard(page, board, startY, fill) {
   const out = [];
-  let y = 0;
+  let y = startY || 0;
   for (const sec of board.sections) {
     if (sec.bare) {
       for (const c of sec.children) out.push(await buildNode(c, page));
       continue;
     }
     const pad = 80;
-    const section = newSection(page, sec.name, "#E9E7E2");
+    const section = newSection(page, sec.name, fill || "#E9E7E2");
     for (const c of sec.children) {
       const node = await buildNode(c, section);
       node.x += pad;
@@ -429,6 +430,7 @@ async function buildBoard(page, board) {
     y += sec.h + pad * 2 + 120;
     out.push(section);
   }
+  out.endY = y;
   return out;
 }
 
@@ -461,9 +463,12 @@ function parseVariant(name) {
 
 async function buildDesignSystem(page) {
   page.appendChild(label("Design system", 40, 600, 0, -300));
-  page.appendChild(label("Colour variables (Magic Dragon collection), text styles in " + ctx.font.family + (ctx.font.fallback ? " (the app uses Geist; it was not available in this Figma, so styles fall back to Inter)" : "") + ", and the components the screens are built from.", 20, 400, 0, -236, 1700, INK2));
+  page.appendChild(label("The mark, colour variables (Magic Dragon collection), text styles in " + ctx.font.family + (ctx.font.fallback ? " (the app uses Geist; it was not available in this Figma, so styles fall back to Inter)" : "") + ", and the components the screens are built from.", 20, 400, 0, -236, 1700, INK2));
   const pad = 80;
   let y = 0;
+
+  /* mark */
+  if (DATA.boards.mark) y = (await buildBoard(page, DATA.boards.mark, 0, "#FFFFFF")).endY;
 
   /* colour */
   const colour = newSection(page, "Colour", "#FFFFFF");

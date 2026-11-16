@@ -11,10 +11,10 @@
     "id": "launch",
     "n": "01",
     "title": "Launch",
-    "note": "A purple line draws the dragon in 14 strokes over 1.3 s, head first and eyes last. The fill fades in as the lines fade out, the wordmark rises 8 pt, and the screen holds until 2.5 s before cross-fading into Home. If the menu is still loading, the line fades to a ghost and redraws until it arrives. Reduce Motion shows the finished mark.",
+    "note": "A purple line draws the dragon in 14 strokes over 1.3 s, head first and eyes last. The lavender body and faint belly then fade in under the lines, which stay at full strength, and the wordmark rises 8 pt. The screen holds until 2.5 s, then cross-fades into Home. If the menu is still loading, the line fades to a ghost and redraws until it arrives, ending on the same tinted mark. Reduce Motion shows the finished mark.",
     "after": {
       "to": "welcome",
-      "ms": 1800
+      "ms": 2950
     }
   },
   {
