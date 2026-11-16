@@ -160,6 +160,13 @@ function measure() {
     before += fs.statSync(file).size;
     after += fs.statSync(out).size;
   }
+  /* the finished splash line art: 14 strokes in drawing order with their timing (Motion page) */
+  const splashDir = path.resolve(process.env.MD_SPLASH || path.join(SRC, "../splash-draw"));
+  for (const name of ["dragon-line.json", "dragon-line.svg"]) {
+    const from = path.join(splashDir, name);
+    if (fs.existsSync(from)) { fs.mkdirSync(path.join(DEST, "assets/brand"), { recursive: true }); fs.copyFileSync(from, path.join(DEST, "assets/brand", name)); }
+    else console.log("no splash line art at", from, "(the Motion page will trace the logo instead)");
+  }
   fs.writeFileSync(path.join(DEST, "assets/manifest.json"), JSON.stringify(manifest, null, 1));
   console.log("images:", Object.keys(manifest).length, "from", (before / 1e6).toFixed(1), "MB to", (after / 1e6).toFixed(1), "MB");
 

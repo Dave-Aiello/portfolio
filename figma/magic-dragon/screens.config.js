@@ -39,7 +39,7 @@ module.exports = {
     [/driver|heading|arriving|last-leg/, "Driver shows only on the last leg: protects other customers' locations. The marker glides between GPS fixes instead of jumping."],
     [/track|on-the-way/, "The arrival window leads, because that is why people open this screen. Stops before yours are a count, never a map; the driver appears only on the last leg, which protects other customers' locations."],
     [/orders/, "Active orders sit on top with live status. Past orders lead with Reorder, the most common next step."],
-    [/launch|splash/, "A purple line draws the dragon in about 1.3 s, then the fill and the wordmark fade in. It never holds the app back, and Reduce Motion shows the finished mark."],
+    [/launch|splash/, "A purple line draws the dragon in 14 strokes over 1.3 s, head first and eyes last. The fill fades in as the lines fade out, the wordmark rises 8 pt, and the screen holds until 2.5 s before cross-fading into Home. If the menu is still loading, the line fades to a ghost and redraws until it arrives. Reduce Motion shows the finished mark."],
     [/address/, "The delivery address is typed and confirmed, not guessed from GPS, because the driver needs a door, not a dot."],
     [/welcome|age|21/, "Age and location are one short checklist instead of two walls. The 21+ answer stays visible with a Change link, and location is asked for with its reason: it picks the store, not the door."],
     [/location/, "Asks for rough location only and says why: it picks which store's menu you see. The map shows an area, never a pin."],

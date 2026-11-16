@@ -11,7 +11,7 @@
     "id": "launch",
     "n": "01",
     "title": "Launch",
-    "note": "The purple mark fades in at its final size, the wordmark follows 120 ms later, then the whole screen cross-fades into Home. No spinner, no bounce.",
+    "note": "A purple line draws the dragon in 14 strokes over 1.3 s, head first and eyes last. The fill fades in as the lines fade out, the wordmark rises 8 pt, and the screen holds until 2.5 s before cross-fading into Home. If the menu is still loading, the line fades to a ghost and redraws until it arrives. Reduce Motion shows the finished mark.",
     "after": {
       "to": "welcome",
       "ms": 1800

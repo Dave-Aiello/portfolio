@@ -147,7 +147,7 @@ async function readAll() {
   }
 
   const boards = {};
-  for (const [name, file, vw, vh] of [["cover", "cover.html", 1920, 960], ["motion", "motion.html", 3300, 2200]]) {
+  for (const [name, file, vw, vh] of [["cover", "cover.html", 1920, 960], ["motion", "motion.html", 3800, 2300]]) {
     await page.setViewportSize({ width: vw, height: vh });
     await page.goto(srv.url + "/figma/magic-dragon/boards/" + file, { waitUntil: "networkidle" });
     await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });

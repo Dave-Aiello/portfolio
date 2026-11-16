@@ -1,14 +1,16 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <title>Magic Dragon motion</title>
-<!-- Motion specs for the Figma file. Poster frames are built from the real launch
-     screen; the splash outline is traced from the dragon artwork in the browser, so
-     every poster is vector and editable in Figma. Timings live in SPEC below. -->
+<!-- Motion specs for the Figma file. Poster frames are built from the real launch screen
+     and the finished splash line art (assets/brand/dragon-line.json: 14 strokes in drawing
+     order, each with its start and duration within a pass). Every poster is vector: each
+     stroke is cut at the exact point the pen has reached. Timings follow the splash
+     reference build (splash-draw/index.html) and live in T below. -->
 <link rel="stylesheet" href="../../../prototype/magic-dragon/src/shared/base.css">
 <link rel="stylesheet" href="../../../prototype/magic-dragon/src/gallery/styles.css">
 <link rel="stylesheet" href="components-extra.css">
 <style>
-html,body{width:3300px;height:2200px;overflow:hidden;background:#F7F6F3}
+html,body{width:3800px;height:2300px;overflow:hidden;background:#F7F6F3}
 .board-section{position:absolute;left:0}
 .cap{position:absolute;width:390px}
 .cap .n{font-size:20px;line-height:26px;font-weight:600;letter-spacing:-0.015em}
@@ -26,6 +28,7 @@ html,body{width:3300px;height:2200px;overflow:hidden;background:#F7F6F3}
 .tl-track{position:relative;width:1430px;height:40px;border-top:1px solid var(--line)}
 .tl-bar{position:absolute;top:12px;height:16px;border-radius:4px;background:var(--purple)}
 .tl-bar.soft{background:#9B7CC0}
+.tl-bar.pale{background:#D9CDE9}
 .tl-bar.grey{background:var(--ink3)}
 .tl-axis{position:relative;margin-left:220px;width:1430px;height:24px;border-top:1px solid var(--ink3)}
 .tl-tick{position:absolute;top:6px;width:80px;margin-left:-40px;text-align:center}
@@ -37,112 +40,129 @@ html,body{width:3300px;height:2200px;overflow:hidden;background:#F7F6F3}
 </style>
 </head>
 <body>
-<section class="board-section" data-name="Splash: hand-drawn dragon" style="top:0;width:3260px;height:1280px" id="s1"></section>
-<section class="board-section" data-name="Pulsing open dot: 1.6 s loop" style="top:1400px;width:1480px;height:330px" id="s2"></section>
-<section class="board-section" data-name="Driver marker glide: 1 s" style="top:1840px;width:1660px;height:300px" id="s3"></section>
+<section class="board-section" data-name="Splash: hand-drawn dragon" style="top:0;width:3620px;height:1360px" id="s1"></section>
+<section class="board-section" data-name="Pulsing open dot: 1.6 s loop" style="top:1480px;width:1480px;height:330px" id="s2"></section>
+<section class="board-section" data-name="Driver marker glide: 1 s" style="top:1920px;width:1660px;height:300px" id="s3"></section>
 <script src="harvest.js"></script>
 <script>
-const SPEC = {
-  line: [0, 1300], fill: [1100, 1500], word: [1450, 1750], handoff: [2100, 2400], rise: 6,
-  frames: [[0, "Blank canvas"], [400, "The line starts tracing"], [800, "Two thirds of the way round"], [1300, "Line closes, fill halfway"], [1600, "Fill done, wordmark fading up"], [2000, "Final frame, also the Reduce Motion frame"]]
-};
+/* splash timing, from the reference build (seconds) */
+const T = { draw: 1.3, redraw: 2.6, rest: 0.35, fadeBack: 0.6, ghost: 0.16, fill: 0.4, linesDelay: 0.08, linesOut: 0.42, wordDelay: 0.2, word: 0.4, rise: 8, hold: 0.6, handoff: 0.45 };
+const FINISH = Math.max(T.fill, T.linesDelay + T.linesOut, T.wordDelay + T.word) + T.hold;   /* 1.2 s: 1.3 to 2.5 s on a fast load */
+const POSTERS = [[0, "Blank canvas"], [400, "Head and back wing"], [800, "Wings, tail and body"], [1180, "Everything but the eyes"], [1300, "Eyes last: all 14 strokes"], [1600, "Fill in, lines fading, wordmark rising"], [1900, "Final frame, held to 2.5 s; also the Reduce Motion frame"]];
 const clamp = (v) => Math.max(0, Math.min(1, v));
-const inOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+const ease = (x) => (1 - Math.cos(Math.PI * clamp(x))) / 2;              /* fill, lines, fade-back, cross-fades */
+const out3 = (x) => 1 - Math.pow(1 - clamp(x), 3);                         /* wordmark */
+const pen = (x) => { x = clamp(x); return 0.25 * x + 0.75 * (1 - Math.cos(Math.PI * x)) / 2; };
+const inOutCubic = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
 const outQuad = (p) => 1 - (1 - p) * (1 - p);
 const el = (h) => { const t = document.createElement("template"); t.innerHTML = h.trim(); return t.content.firstChild; };
+const r2 = (n) => Math.round(n * 100) / 100;
 
-/* ---- trace the dragon body (white, without the grey detail strokes) into closed outlines */
+/* fast load (the menu is ready within the first pass) */
+function fastState(t) {
+  const s = t / 1000;
+  if (s < T.draw) return { u: s / T.draw, ink: 1, ghost: 0, lines: 1, fill: 0, word: 0 };
+  const k = Math.min(s - T.draw, FINISH);
+  return { u: 1, ink: 1, ghost: 0, fill: ease(k / T.fill), lines: 1 - ease((k - T.linesDelay) / T.linesOut), word: out3((k - T.wordDelay) / T.word) };
+}
+
+/* ---- the finished line art: absolute M/C/Z paths, cut exactly with de Casteljau */
+function parseStroke(s) {
+  const nums = s.d.match(/[MCZ]|-?\d*\.?\d+(?:e-?\d+)?/gi);
+  let i = 0, cur = null, start = null;
+  const segs = [];
+  while (i < nums.length) {
+    const c = nums[i++];
+    if (c === "M") { cur = [+nums[i++], +nums[i++]]; start = cur; }
+    else if (c === "C") {
+      while (i < nums.length && !/[MCZ]/i.test(nums[i])) {
+        const p = [cur, [+nums[i], +nums[i + 1]], [+nums[i + 2], +nums[i + 3]], [+nums[i + 4], +nums[i + 5]]];
+        i += 6; segs.push(p); cur = p[3];
+      }
+    } else if (/Z/i.test(c)) { segs.push([cur, cur, start, start]); cur = start; }
+  }
+  const at = (p, t) => { const m = 1 - t; return [m * m * m * p[0][0] + 3 * m * m * t * p[1][0] + 3 * m * t * t * p[2][0] + t * t * t * p[3][0], m * m * m * p[0][1] + 3 * m * m * t * p[1][1] + 3 * m * t * t * p[2][1] + t * t * t * p[3][1]]; };
+  const tables = segs.map((p) => { const tab = [0]; let prev = p[0], L = 0; for (let k = 1; k <= 32; k++) { const q = at(p, k / 32); L += Math.hypot(q[0] - prev[0], q[1] - prev[1]); tab.push(L); prev = q; } return tab; });
+  const len = tables.reduce((n, t) => n + t[32], 0);
+  return { id: s.id, start: s.start, dur: s.dur, segs, tables, len, d: s.d };
+}
+function split(p, t) {
+  const lerp = (a, b) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  const a = lerp(p[0], p[1]), b = lerp(p[1], p[2]), c = lerp(p[2], p[3]), d = lerp(a, b), e = lerp(b, c), f = lerp(d, e);
+  return [p[0], a, d, f];
+}
+function cut(s, f) {
+  if (f <= 0) return "";
+  if (s.pts) return cutPolyline(s, f);
+  if (f >= 1) return s.d;
+  let left = s.len * f, out = "M" + r2(s.segs[0][0][0]) + " " + r2(s.segs[0][0][1]);
+  const C = (p) => "C" + [p[1], p[2], p[3]].map((q) => r2(q[0]) + " " + r2(q[1])).join(" ");
+  for (let i = 0; i < s.segs.length && left > 0; i++) {
+    const tab = s.tables[i], L = tab[32];
+    if (L <= left) { out += C(s.segs[i]); left -= L; continue; }
+    let k = 1; while (tab[k] < left) k++;
+    const t = (k - 1 + (left - tab[k - 1]) / (tab[k] - tab[k - 1] || 1)) / 32;
+    out += C(split(s.segs[i], t));
+    left = 0;
+  }
+  return out;
+}
+
+/* ---- fallback when dragon-line.json is missing: trace the logo's outlines (drawn together) */
 function trace(img, W) {
-  const H = Math.round(W * img.naturalHeight / img.naturalWidth);
-  const cw = W + 2, ch = H + 2;
+  const H = Math.round(W * img.naturalHeight / img.naturalWidth), cw = W + 2, ch = H + 2;
   const c = document.createElement("canvas"); c.width = cw; c.height = ch;
   const g = c.getContext("2d"); g.drawImage(img, 1, 1, W, H);
   const d = g.getImageData(0, 0, cw, ch).data;
-  /* the body is the most common opaque colour; detail strokes differ from it and become holes */
   const lum = (i) => (0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]) / 255;
   const hist = new Array(32).fill(0);
   for (let i = 0; i < cw * ch; i++) if (d[i * 4 + 3] > 250) hist[Math.min(31, Math.floor(lum(i) * 32))]++;
   const body = (hist.indexOf(Math.max(...hist)) + 0.5) / 32;
   const inside = new Uint8Array(cw * ch);
   for (let i = 0; i < cw * ch; i++) inside[i] = d[i * 4 + 3] > 127 && Math.abs(lum(i) - body) < 0.12 ? 1 : 0;
-  const v = (x, y) => inside[y * cw + x];
-  const adj = new Map();
-  const key = (x, y) => x * 2 + "," + y * 2;
+  const v = (x, y) => inside[y * cw + x], adj = new Map(), key = (x, y) => x * 2 + "," + y * 2;
   const link = (a, b) => { for (const [p, q] of [[a, b], [b, a]]) { if (!adj.has(p)) adj.set(p, []); adj.get(p).push(q); } };
   for (let y = 0; y < ch - 1; y++) for (let x = 0; x < cw - 1; x++) {
     const k = v(x, y) * 8 + v(x + 1, y) * 4 + v(x + 1, y + 1) * 2 + v(x, y + 1);
     if (k === 0 || k === 15) continue;
-    const T = key(x + 0.5, y), R = key(x + 1, y + 0.5), B = key(x + 0.5, y + 1), L = key(x, y + 0.5);
-    const segs = { 1: [[L, B]], 2: [[B, R]], 3: [[L, R]], 4: [[T, R]], 5: [[T, R], [L, B]], 6: [[T, B]], 7: [[T, L]], 8: [[T, L]], 9: [[T, B]], 10: [[T, L], [B, R]], 11: [[T, R]], 12: [[L, R]], 13: [[B, R]], 14: [[L, B]] }[k];
-    segs.forEach(([a, b]) => link(a, b));
+    const Tp = key(x + 0.5, y), R = key(x + 1, y + 0.5), B = key(x + 0.5, y + 1), L = key(x, y + 0.5);
+    ({ 1: [[L, B]], 2: [[B, R]], 3: [[L, R]], 4: [[Tp, R]], 5: [[Tp, R], [L, B]], 6: [[Tp, B]], 7: [[Tp, L]], 8: [[Tp, L]], 9: [[Tp, B]], 10: [[Tp, L], [B, R]], 11: [[Tp, R]], 12: [[L, R]], 13: [[B, R]], 14: [[L, B]] })[k].forEach(([a, b]) => link(a, b));
   }
   const seen = new Set(), loops = [];
-  for (const start of adj.keys()) {
-    if (seen.has(start)) continue;
-    const loop = [];
-    let prev = null, cur = start;
-    while (cur && !seen.has(cur)) {
-      seen.add(cur);
-      const [px, py] = cur.split(",").map(Number);
-      loop.push([px / 2 - 1, py / 2 - 1]);
-      const next = adj.get(cur).find((n) => n !== prev && !seen.has(n));
-      prev = cur; cur = next;
-    }
+  for (const st of adj.keys()) {
+    if (seen.has(st)) continue;
+    const loop = []; let prev = null, cur = st;
+    while (cur && !seen.has(cur)) { seen.add(cur); const [px, py] = cur.split(",").map(Number); loop.push([px / 2 - 1, py / 2 - 1]); const next = adj.get(cur).find((n) => n !== prev && !seen.has(n)); prev = cur; cur = next; }
     if (loop.length > 8) loops.push(loop);
   }
-  return { loops, W, H };
+  const s = 176 / W;
+  return loops.map((l) => { const pts = l.filter((_, i) => i % 3 === 0).map(([x, y]) => [x * s, y * s]); let len = 0; for (let i = 1; i < pts.length; i++) len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); return { pts, len, start: 0, dur: 1, d: "M" + pts.map((p) => r2(p[0]) + " " + r2(p[1])).join("L") + "Z" }; }).filter((p) => p.len > 12);
 }
-function simplify(pts, eps) {
-  if (pts.length < 3) return pts;
-  const keep = new Uint8Array(pts.length); keep[0] = keep[pts.length - 1] = 1;
-  const stack = [[0, pts.length - 1]];
-  while (stack.length) {
-    const [a, b] = stack.pop();
-    let best = 0, idx = -1;
-    const [x1, y1] = pts[a], [x2, y2] = pts[b];
-    const L = Math.hypot(x2 - x1, y2 - y1) || 1;
-    for (let i = a + 1; i < b; i++) {
-      const dd = Math.abs((y2 - y1) * pts[i][0] - (x2 - x1) * pts[i][1] + x2 * y1 - y2 * x1) / L;
-      if (dd > best) { best = dd; idx = i; }
-    }
-    if (best > eps && idx > -1) { keep[idx] = 1; stack.push([a, idx], [idx, b]); }
+function cutPolyline(s, f) {
+  if (f >= 1) return s.d;
+  let left = s.len * f, out = [s.pts[0]];
+  for (let i = 1; i < s.pts.length && left > 0; i++) {
+    const a = s.pts[i - 1], b = s.pts[i], seg = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (seg <= left) { out.push(b); left -= seg; } else { const t = left / seg; out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]); left = 0; }
   }
-  return pts.filter((_, i) => keep[i]);
+  return out.length > 1 ? "M" + out.map((p) => r2(p[0]) + " " + r2(p[1])).join("L") : "";
 }
-function chaikin(pts) {
-  const out = [];
-  for (let i = 0; i < pts.length; i++) {
-    const p = pts[i], q = pts[(i + 1) % pts.length];
-    out.push([p[0] * 0.75 + q[0] * 0.25, p[1] * 0.75 + q[1] * 0.25], [p[0] * 0.25 + q[0] * 0.75, p[1] * 0.25 + q[1] * 0.75]);
-  }
-  return out;
+
+/* the line art at one moment: a ghost layer (all strokes) under the ink layer (strokes cut at u) */
+function lineSvg(strokes, st, size, art, x0, y0) {
+  const W = art.width, H = art.height, sw = art.stroke, color = art.color;
+  const m = 2, k = size / W;   /* 2-unit margin, as in dragon-line.svg, so round caps aren't clipped */
+  let paths = "";
+  const ghostA = r2(st.ghost * st.lines), inkA = r2(st.ink * st.lines);
+  if (ghostA > 0) strokes.forEach((s) => { paths += '<path d="' + s.d + '" fill="none" stroke="' + color + '" stroke-opacity="' + ghostA + '" stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round"/>'; });
+  if (inkA > 0) strokes.forEach((s) => {
+    const f = st.u <= s.start ? 0 : pen((st.u - s.start) / s.dur);
+    const d = cut(s, f);
+    if (d) paths += '<path d="' + d + '" fill="none" stroke="' + color + '"' + (inkA < 1 ? ' stroke-opacity="' + inkA + '"' : "") + ' stroke-width="' + sw + '" stroke-linecap="round" stroke-linejoin="round"/>';
+  });
+  return paths ? '<svg aria-label="Line art" style="position:absolute;left:' + r2((x0 || 0) - m * k) + "px;top:" + r2((y0 || 0) - m * k) + 'px" width="' + r2((W + 2 * m) * k) + '" height="' + r2((H + 2 * m) * k) + '" viewBox="' + -m + " " + -m + " " + r2(W + 2 * m) + " " + r2(H + 2 * m) + '">' + paths + "</svg>" : "";
 }
-function simplifyLoop(l, eps) {
-  /* split a closed loop at its farthest point, so both halves have distinct ends */
-  let k = 0, best = -1;
-  l.forEach((p, i) => { const d = Math.hypot(p[0] - l[0][0], p[1] - l[0][1]); if (d > best) { best = d; k = i; } });
-  const a = simplify(l.slice(0, k + 1), eps), b = simplify(l.slice(k).concat([l[0]]), eps);
-  return a.concat(b.slice(1, -1));
-}
-function outlinePaths(tr, size) {
-  const s = size / tr.W;
-  return tr.loops.map((l) => chaikin(simplifyLoop(l, 0.9)).map(([x, y]) => [x * s, y * s]))
-    .map((pts) => { let len = 0; for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; len += Math.hypot(b[0] - a[0], b[1] - a[1]); } return { pts, len }; })
-    .filter((p) => p.len > 6);
-}
-function partial(paths, f) {
-  const f2 = (n) => Math.round(n * 100) / 100;
-  return paths.map(({ pts, len }) => {
-    if (f >= 1) return "M" + pts.map((p) => f2(p[0]) + " " + f2(p[1])).join("L") + "Z";
-    let left = len * f, out = [pts[0]];
-    for (let i = 0; i < pts.length && left > 0; i++) {
-      const a = pts[i], b = pts[(i + 1) % pts.length], seg = Math.hypot(b[0] - a[0], b[1] - a[1]);
-      if (seg <= left) { out.push(b); left -= seg; }
-      else { const t = left / seg; out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]); left = 0; }
-    }
-    return out.length > 1 ? "M" + out.map((p) => f2(p[0]) + " " + f2(p[1])).join("L") : "";
-  }).join("");
-}
+
 function annotation(title, rows, style) {
   return el('<div class="annotation" data-name="Spec: ' + title + '" style="' + style + '"><div class="ann-line"></div><div class="ann-body"><div class="t-h2">' + title + "</div>" +
     rows.map(([k, v]) => '<div class="ann-row t-body"><span class="ann-key">' + k + '</span><span class="ann-val">' + v + "</span></div>").join("") + "</div></div>");
@@ -153,19 +173,25 @@ function annotation(title, rows, style) {
   const launch = h.find(".launch-mark");
   const sb = h.find(".sb"), hi = h.find(".hi");
   const marker = h.asset("brand/driver-marker-26pt@8x.png");
-  const art = new Image();
-  art.src = h.asset("brand/dragon-no-smoke-flat.png");
-  await art.decode();
-  const ratio = art.naturalHeight / art.naturalWidth;
-  const paths = outlinePaths(trace(art, 360), 88);
+  const markSrc = launch.querySelector("img").src;
 
-  /* 1. splash posters */
+  /* the finished line art, or a traced fallback */
+  let art = await fetch(h.asset("brand/dragon-line.json")).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  let strokes;
+  if (art && art.strokes) strokes = art.strokes.map(parseStroke);
+  else {
+    const img = new Image(); img.src = h.asset("brand/dragon-no-smoke-flat.png"); await img.decode();
+    art = { width: 176, height: r2(176 * img.naturalHeight / img.naturalWidth), stroke: 3.5, color: "#4b0d83" };
+    strokes = trace(img, 520);
+  }
+  const eyes = strokes.filter((s) => /eye/.test(s.id || ""));
+  const eyesAt = eyes.length ? Math.min(...eyes.map((s) => s.start)) * T.draw : 1.18;
+
+  /* 1. splash posters, fast load */
   const s1 = document.getElementById("s1");
-  SPEC.frames.forEach(([t, label], i) => {
+  POSTERS.forEach(([t, label], i) => {
     const x = i * 430;
-    const f = inOut(clamp((t - SPEC.line[0]) / (SPEC.line[1] - SPEC.line[0])));
-    const fill = clamp((t - SPEC.fill[0]) / (SPEC.fill[1] - SPEC.fill[0]));
-    const word = clamp((t - SPEC.word[0]) / (SPEC.word[1] - SPEC.word[0]));
+    const st = fastState(t);
     const scr = el('<div class="screen" data-frame data-name="Splash ' + t + ' ms" style="position:absolute;left:' + x + 'px;top:0"></div>');
     scr.appendChild(h.copy(sb));
     const m = h.copy(launch);
@@ -173,48 +199,53 @@ function annotation(title, rows, style) {
     const wrap = el('<div class="mark-wrap"></div>');
     img.replaceWith(wrap);
     wrap.appendChild(img);
-    img.style.opacity = String(fill);
-    const d = partial(paths, f);
-    if (f > 0 && d) wrap.insertAdjacentHTML("beforeend", '<svg aria-label="Outline" width="88" height="' + (88 * ratio).toFixed(2) + '" viewBox="0 0 88 ' + (88 * ratio).toFixed(2) + '"><path d="' + d + '" fill="none" stroke="#4B0D83" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    img.style.opacity = String(r2(st.fill));
+    wrap.insertAdjacentHTML("beforeend", lineSvg(strokes, st, 88, art));
     const wm = m.querySelector(".wm");
-    if (wm) { wm.style.opacity = String(word); wm.style.transform = "translateY(" + (SPEC.rise * (1 - word)).toFixed(2) + "px)"; }
+    if (wm) { wm.style.opacity = String(r2(st.word)); wm.style.transform = "translateY(" + (T.rise * (1 - st.word)).toFixed(2) + "px)"; }
     scr.appendChild(m);
     scr.appendChild(h.copy(hi));
     s1.appendChild(scr);
     s1.appendChild(el('<div class="cap" style="left:' + x + 'px;top:872px"><div class="n">' + t + ' ms</div><div class="t-body">' + label + "</div></div>"));
   });
   s1.appendChild(annotation("Splash: hand-drawn dragon", [
-    ["Line", "Purple 1.4 pt line traces the dragon, 0 to 1.3 s, ease-in-out"],
-    ["Fill", "Fades from 0 to 100% between 1.1 s and 1.5 s, while the line closes"],
-    ["Wordmark", "Fades in and rises 6 pt, 1.45 s to 1.75 s"],
-    ["Hand-off", "Cross-fades to Home (or Welcome on first launch) at 2.1 s, 300 ms"],
-    ["Waiting", "If the menu is still loading, the final frame holds; it never loops"],
-    ["Reduce Motion", "Shows the final frame straight away, then the same cross-fade"]
-  ], "left:2620px;top:0"));
-  const tl = el('<div class="timeline" data-name="Timeline" style="left:0;top:990px"><div class="t-h2" style="margin-bottom:14px">Timeline</div></div>');
-  const span = 2400, tw = 1430;
-  for (const [label, [a, b], cls] of [["Line draws", SPEC.line, ""], ["Fill fades in", SPEC.fill, "soft"], ["Wordmark", SPEC.word, "soft"], ["Hand-off to Home", SPEC.handoff, "grey"]]) {
+    ["Line", "14 strokes in drawing order, head first, eyes last (" + eyesAt.toFixed(2) + " to 1.3 s); 0 to 1.3 s"],
+    ["Pen", "Each stroke eases in and out, with slight overlaps after a pen lift. 3.5 pt on the 176 pt artwork (1.75 pt at the 88 pt mark), round caps"],
+    ["Fill", "The purple mark fades in from 1.3 to 1.7 s while the lines fade out from 1.38 to 1.8 s"],
+    ["Wordmark", "Fades in and rises 8 pt, 1.5 to 1.9 s; the screen holds until 2.5 s"],
+    ["Fast load", "Cross-fades into Home, 2.5 to 2.95 s"],
+    ["Slow load", "Lines rest 0.35 s, fade to a 16% ghost over 0.6 s and redraw over 2.6 s, looping until the menu arrives, then finish from the pen's position"],
+    ["Reduce Motion", "Shows the final frame, then the same cross-fade into Home"]
+  ], "left:3060px;top:0"));
+
+  const tl = el('<div class="timeline" data-name="Timeline, fast load" style="left:0;top:990px"><div class="t-h2" style="margin-bottom:14px">Timeline, fast load</div></div>');
+  const span = 3000, tw = 1430;
+  const rows = [["Line draws", [0, 1300], ""], ["Eyes", [Math.round(eyesAt * 1000), 1300], ""], ["Fill fades in", [1300, 1700], "soft"], ["Lines fade out", [1380, 1800], "pale"], ["Wordmark rises 8 pt", [1500, 1900], "soft"], ["Hold", [1900, 2500], "pale"], ["Cross-fade to Home", [2500, 2950], "grey"]];
+  for (const [label, [a, b], cls] of rows) {
     tl.appendChild(el('<div class="tl-row"><div class="tl-label t-body">' + label + '</div><div class="tl-track"><div class="tl-bar ' + cls + '" style="left:' + (a / span * tw).toFixed(1) + "px;width:" + ((b - a) / span * tw).toFixed(1) + 'px"></div></div></div>'));
   }
   const axis = el('<div class="tl-axis"></div>');
-  for (let t = 0; t <= span; t += 400) axis.appendChild(el('<div class="tl-tick t-sub" style="left:' + (t / span * tw).toFixed(1) + 'px">' + (t / 1000).toFixed(1) + " s</div>"));
+  for (let t = 0; t <= span; t += 500) axis.appendChild(el('<div class="tl-tick t-sub" style="left:' + (t / span * tw).toFixed(1) + 'px">' + (t / 1000).toFixed(1) + " s</div>"));
   tl.appendChild(axis);
   s1.appendChild(tl);
 
-  /* close-ups of the line at 2x */
-  const big = outlinePaths(trace(art, 520), 176);
-  const markSrc = launch.querySelector("img").src;
-  s1.appendChild(el('<div class="t-h2" style="position:absolute;left:1800px;top:990px">The line, up close</div>'));
-  [400, 800, 1300, 2000].forEach((t, i) => {
-    const f = inOut(clamp(t / SPEC.line[1]));
-    const fill = clamp((t - SPEC.fill[0]) / (SPEC.fill[1] - SPEC.fill[0]));
-    const x = 1800 + i * 236, hgt = (176 * ratio).toFixed(2);
-    const tile = el('<div class="poster" data-frame data-name="Line close-up ' + t + ' ms" style="left:' + x + 'px;top:1030px;width:216px;height:216px;background:#F7F6F3"></div>');
-    if (fill > 0) tile.appendChild(el('<img src="' + markSrc + '" alt="" style="position:absolute;left:20px;top:' + ((216 - 176 * ratio) / 2).toFixed(2) + 'px;width:176px;opacity:' + fill + '">'));
-    const d = partial(big, f);
-    if (d) tile.insertAdjacentHTML("beforeend", '<svg aria-label="Outline" style="position:absolute;left:20px;top:' + ((216 - 176 * ratio) / 2).toFixed(2) + 'px" width="176" height="' + hgt + '" viewBox="0 0 176 ' + hgt + '"><path d="' + d + '" fill="none" stroke="#4B0D83" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  /* slow load, at 2x: rest, ghost, redraw over the ghost, the menu arrives */
+  s1.appendChild(el('<div class="t-h2" style="position:absolute;left:1800px;top:990px">Slow load, up close</div>'));
+  const slow = [
+    [{ u: 1, ink: 1, ghost: 0, lines: 1, fill: 0 }, "Drawn, resting 0.35 s"],
+    [{ u: 0, ink: 0, ghost: T.ghost, lines: 1, fill: 0 }, "Faded to a 16% ghost, 0.6 s"],
+    [{ u: 0.45, ink: 1, ghost: T.ghost, lines: 1, fill: 0 }, "Redrawing over the ghost, 2.6 s a pass"],
+    [{ u: 0.8, ink: 1, ghost: T.ghost, lines: 1, fill: 0 }, "Menu arrives: the pen speeds up and finishes"],
+    [{ u: 1, ink: 1, ghost: 0, lines: 0.5, fill: 0.85 }, "Then the same finish as a fast load"]
+  ];
+  slow.forEach(([st, label], i) => {
+    const x = 1800 + i * 236, size = 176, top = ((216 - size * art.height / art.width) / 2).toFixed(2);
+    const tile = el('<div class="poster" data-frame data-name="Slow load ' + (i + 1) + '" style="left:' + x + 'px;top:1030px;width:216px;height:216px;background:#F7F6F3"></div>');
+    if (st.fill > 0) tile.appendChild(el('<img src="' + markSrc + '" alt="" style="position:absolute;left:20px;top:' + top + 'px;width:' + size + 'px;opacity:' + st.fill + '">'));
+    const svg = lineSvg(strokes, st, size, art, 20, +top);
+    if (svg) tile.insertAdjacentHTML("beforeend", svg);
     s1.appendChild(tile);
-    s1.appendChild(el('<div class="cap t-sub" style="left:' + x + 'px;top:1256px;width:216px">' + t + " ms</div>"));
+    s1.appendChild(el('<div class="cap t-sub" style="left:' + x + 'px;top:1256px;width:216px">' + label + "</div>"));
   });
 
   /* 2. pulsing open dot, drawn at 6x */
@@ -244,19 +275,19 @@ function annotation(title, rows, style) {
   map.innerHTML = '<svg class="map" width="760" height="240" viewBox="0 0 760 240"><rect width="760" height="240" fill="#E9E6E0"/><path d="M300 76H420V132H300z" fill="#DAE4D1"/><path d="' + streets + '" stroke="#FFFFFF" stroke-width="6" fill="none"/><path d="M-10 132H780" stroke="#DEDAD3" stroke-width="13" fill="none"/><path d="M-10 132H780" stroke="#FFFFFF" stroke-width="10" fill="none"/></svg>';
   const x0 = 80, x1 = 626;
   [[0, 0.3], [250, 0.3], [500, 0.3], [750, 0.3], [1000, 1]].forEach(([t, op]) => {
-    const x = x0 + (x1 - x0) * inOut(t / 1000);
+    const x = x0 + (x1 - x0) * inOutCubic(t / 1000);
     map.appendChild(el('<div class="driver-badge live" style="position:absolute;left:' + x.toFixed(2) + 'px;top:108px;opacity:' + op + '"><img src="' + marker + '" alt=""></div>'));
   });
   [[0, "0 ms"], [500, "500 ms"], [1000, "1000 ms"]].forEach(([t, l]) => {
-    const x = x0 + (x1 - x0) * inOut(t / 1000) + 24 - 40;
+    const x = x0 + (x1 - x0) * inOutCubic(t / 1000) + 24 - 40;
     map.appendChild(el('<div class="glide-tick t-sub" style="left:' + x.toFixed(1) + 'px;top:172px">' + l + "</div>"));
   });
   s3.appendChild(map);
   s3.appendChild(el('<div class="cap t-sub" style="left:0;top:256px;width:760px">Ghosts every 250 ms: slow start, fast middle, slow arrival</div>'));
   let curve = "M20 162";
-  for (let i = 1; i <= 40; i++) { const p = i / 40; curve += "L" + (20 + 142 * p).toFixed(1) + " " + (162 - 142 * inOut(p)).toFixed(1); }
-  const ease = el('<div class="poster" data-frame data-name="Ease-in-out cubic" style="left:800px;top:0;width:182px;height:182px"><svg aria-label="Easing curve" width="182" height="182" viewBox="0 0 182 182"><path d="M20 20V162H162" stroke="#E7E4DF" stroke-width="1.5" fill="none"/><path d="' + curve + '" stroke="#4B0D83" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>');
-  s3.appendChild(ease);
+  for (let i = 1; i <= 40; i++) { const p = i / 40; curve += "L" + (20 + 142 * p).toFixed(1) + " " + (162 - 142 * inOutCubic(p)).toFixed(1); }
+  const easeTile = el('<div class="poster" data-frame data-name="Ease-in-out cubic" style="left:800px;top:0;width:182px;height:182px"><svg aria-label="Easing curve" width="182" height="182" viewBox="0 0 182 182"><path d="M20 20V162H162" stroke="#E7E4DF" stroke-width="1.5" fill="none"/><path d="' + curve + '" stroke="#4B0D83" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>');
+  s3.appendChild(easeTile);
   s3.appendChild(el('<div class="cap t-sub" style="left:800px;top:198px;width:182px">Ease-in-out cubic</div>'));
   s3.appendChild(annotation("Driver marker glide", [
     ["Move", "Straight line to each new GPS fix"],
