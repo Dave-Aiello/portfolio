@@ -1,0 +1,17 @@
+/* Variants and components the Gallery screens don't have markup for yet.
+   :where() keeps these at zero specificity, so Gallery's own CSS wins once it
+   defines them. */
+.btn.disabled,.btn:disabled{opacity:.4}
+.btn.btn-primary.pressed{background:#3A0A66}
+:where(.btn-secondary){background:var(--surface);border:1px solid var(--line);color:var(--purple)}
+.btn.btn-secondary.pressed{background:var(--tint)}
+.btn.btn-plain.pressed{background:var(--tile)}
+.add.disabled{opacity:.4}
+:where(.chip){display:inline-flex;align-items:center;height:34px;padding:0 14px;border-radius:17px;border:1px solid var(--line);background:var(--surface);font-size:14px;line-height:18px;font-weight:500;color:var(--ink);white-space:nowrap}
+:where(.chip.on,.chip.selected){background:var(--ink);border-color:var(--ink);color:#fff}
+:where(.driver-badge){position:relative;display:block;width:48px;height:48px}
+:where(.driver-badge img){display:block;width:48px;height:48px}
+:where(.driver-badge.faded){opacity:.5}
+:where(.pulse-dot){position:relative;display:block;width:16px;height:16px}
+:where(.pulse-dot .pd-ring){position:absolute;left:0;top:0;width:16px;height:16px;border-radius:8px;background:var(--green);opacity:.25}
+:where(.pulse-dot .pd-dot){position:absolute;left:4px;top:4px;width:8px;height:8px;border-radius:4px;background:var(--green)}

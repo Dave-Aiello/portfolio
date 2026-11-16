@@ -1,0 +1,122 @@
+[
+ {
+  "id": "launch",
+  "file": "src/gallery/01-launch.html",
+  "title": "Launch"
+ },
+ {
+  "id": "welcome",
+  "file": "src/gallery/02-welcome.html",
+  "title": "21+ and location"
+ },
+ {
+  "id": "address",
+  "file": "src/gallery/03-address.html",
+  "title": "Delivery address"
+ },
+ {
+  "id": "home",
+  "file": "src/gallery/04-home.html",
+  "title": "Home"
+ },
+ {
+  "id": "menu",
+  "file": "src/gallery/05-menu.html",
+  "title": "Menu"
+ },
+ {
+  "id": "category",
+  "file": "src/gallery/06-category.html",
+  "title": "Category and filters"
+ },
+ {
+  "id": "search",
+  "file": "src/gallery/07-search.html",
+  "title": "Search"
+ },
+ {
+  "id": "product",
+  "file": "src/gallery/08-product.html",
+  "title": "Product"
+ },
+ {
+  "id": "product-added",
+  "file": "src/gallery/09-product-added.html",
+  "title": "Added to bag"
+ },
+ {
+  "id": "bag",
+  "file": "src/gallery/10-bag.html",
+  "title": "Bag"
+ },
+ {
+  "id": "sign-in",
+  "file": "src/gallery/11-sign-in.html",
+  "title": "Phone sign-in"
+ },
+ {
+  "id": "code",
+  "file": "src/gallery/12-code.html",
+  "title": "Code entry"
+ },
+ {
+  "id": "placed",
+  "file": "src/gallery/13-placed.html",
+  "title": "Order placed"
+ },
+ {
+  "id": "track-preparing",
+  "file": "src/gallery/14-track-preparing.html",
+  "title": "Tracking: preparing"
+ },
+ {
+  "id": "track-on-the-way",
+  "file": "src/gallery/15-track-on-the-way.html",
+  "title": "Tracking: on the way"
+ },
+ {
+  "id": "track-arriving",
+  "file": "src/gallery/16-track-arriving.html",
+  "title": "Tracking: arriving"
+ },
+ {
+  "id": "track-delivered",
+  "file": "src/gallery/17-track-delivered.html",
+  "title": "Tracking: delivered"
+ },
+ {
+  "id": "receipt",
+  "file": "src/gallery/18-receipt.html",
+  "title": "Receipt"
+ },
+ {
+  "id": "orders",
+  "file": "src/gallery/19-orders.html",
+  "title": "Orders"
+ },
+ {
+  "id": "account",
+  "file": "src/gallery/20-account.html",
+  "title": "Account"
+ },
+ {
+  "id": "location-off",
+  "file": "src/gallery/21-location-off.html",
+  "title": "Location turned off"
+ },
+ {
+  "id": "bag-empty",
+  "file": "src/gallery/22-bag-empty.html",
+  "title": "Empty bag"
+ },
+ {
+  "id": "closed",
+  "file": "src/gallery/23-closed.html",
+  "title": "Store closed"
+ },
+ {
+  "id": "problem",
+  "file": "src/gallery/24-problem.html",
+  "title": "Order problem"
+ }
+]

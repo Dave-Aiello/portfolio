@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Magic Dragon cover</title>
+<link rel="stylesheet" href="../../../prototype/magic-dragon/src/shared/base.css">
+<link rel="stylesheet" href="../../../prototype/magic-dragon/src/gallery/styles.css">
+<style>
+html,body{width:1920px;height:960px;overflow:hidden;background:#F7F6F3}
+.board-section{position:absolute;left:0;top:0;width:1920px;height:960px}
+.cover{position:absolute;left:0;top:0;width:1920px;height:960px;background:var(--canvas);overflow:hidden}
+.cover-text{position:absolute;left:160px;top:0;bottom:0;width:980px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-size:20px;line-height:28px;font-weight:500;color:var(--ink2)}
+.title{margin-top:20px;font-size:128px;line-height:128px;font-weight:600;letter-spacing:-0.035em;color:var(--ink)}
+.desc{margin-top:36px;width:900px;font-size:30px;line-height:42px;color:var(--ink2);letter-spacing:-0.01em}
+.foot{position:absolute;left:160px;bottom:96px;display:flex;align-items:center;gap:16px;font-size:18px;line-height:24px;font-weight:500;color:var(--ink2)}
+.foot img{width:44px;height:44px;border-radius:10px}
+.foot .dot{color:var(--ink3)}
+.mark{position:absolute;right:190px;top:50%;width:520px;margin-top:-255px}
+.mark img{width:520px}
+.rule{position:absolute;left:160px;right:160px;bottom:160px;height:1px;background:var(--line)}
+</style>
+</head>
+<body>
+<section class="board-section" data-name="Cover" data-bare>
+  <div class="cover" data-name="Cover" data-frame>
+    <div class="cover-text">
+      <div class="eyebrow">Product design case study · iPhone app · 2026</div>
+      <div class="title">Magic Dragon</div>
+      <div class="desc">A native iPhone app for licensed cannabis delivery in Massachusetts: a photo-first menu, a short checkout, and live tracking to the door.</div>
+    </div>
+    <div class="mark"><img class="mk" id="mark" alt="Magic Dragon mark"></div>
+    <div class="rule"></div>
+    <div class="foot"><img id="icon" alt="App icon"><span>magicdragon.app</span><span class="dot">·</span><span>Gallery direction</span></div>
+  </div>
+</section>
+<script src="harvest.js"></script>
+<script>
+(async function () {
+  const h = await window.harvest();
+  const mk = h.find("img.mk");
+  document.getElementById("mark").src = mk ? mk.src : h.P + "assets/brand/dragon-no-smoke-flat.png";
+  const man = await fetch(h.P + "assets/manifest.json").then((r) => r.json()).catch(() => ({}));
+  document.getElementById("icon").src = h.P + "assets/" + (man["brand/app-icon.png"] || "brand/app-icon.png");
+  await h.settle();
+  window.__ready = true;
+})();
+</script>
+</body></html>

@@ -1,0 +1,276 @@
+{
+  "name": "gallery",
+  "title": "Gallery",
+  "rationale": "Gallery treats the menu like a well-lit shop window: a warm off-white canvas, large product photography and quiet chrome, so the products do the selling. Purple is kept for actions and progress (add, check out, the delivery steps), which keeps every screen calm and makes the next step obvious.",
+  "motion": "The purple mark fades in at its final size, the wordmark follows 120 ms later, then the whole screen cross-fades into Home. No spinner, no bounce.",
+  "palette": [
+    [
+      "Canvas",
+      "#F7F6F3"
+    ],
+    [
+      "Ink",
+      "#16131B"
+    ],
+    [
+      "Purple",
+      "#4B0D83"
+    ],
+    [
+      "Tile",
+      "#EFEDE9"
+    ],
+    [
+      "Open",
+      "#1D7A4C"
+    ]
+  ],
+  "tokens": [
+    [
+      "Canvas",
+      "canvas",
+      "#F7F6F3"
+    ],
+    [
+      "Surface",
+      "surface",
+      "#FFFFFF"
+    ],
+    [
+      "Ink",
+      "ink",
+      "#16131B"
+    ],
+    [
+      "Ink 2",
+      "ink2",
+      "#5F5A66"
+    ],
+    [
+      "Ink 3",
+      "ink3",
+      "#8E8994"
+    ],
+    [
+      "Line",
+      "line",
+      "#E7E4DF"
+    ],
+    [
+      "Tile",
+      "tile",
+      "#EFEDE9"
+    ],
+    [
+      "Purple",
+      "purple",
+      "#4B0D83"
+    ],
+    [
+      "Tint",
+      "tint",
+      "#F3EEF9"
+    ],
+    [
+      "Open",
+      "green",
+      "#1D7A4C"
+    ],
+    [
+      "Warning",
+      "warn",
+      "#A9481A"
+    ],
+    [
+      "Warning tint",
+      "warn-bg",
+      "#FBEFE4"
+    ]
+  ],
+  "screens": [
+    {
+      "file": "01-launch",
+      "id": "launch",
+      "label": "Launch",
+      "group": "browse",
+      "after": {
+        "to": "welcome",
+        "ms": 1800
+      },
+      "note": "The purple mark fades in at its final size, the wordmark follows 120 ms later, then the whole screen cross-fades into Home. No spinner, no bounce."
+    },
+    {
+      "file": "02-welcome",
+      "id": "welcome",
+      "label": "21+ and location",
+      "group": "browse",
+      "note": "Massachusetts requires the 21+ check before the menu. Location comes next, and only roughly: it picks which store's menu you see. The street address is typed on the next screen."
+    },
+    {
+      "file": "03-address",
+      "id": "address",
+      "label": "Delivery address",
+      "group": "browse",
+      "note": "The delivery address is always typed, with suggestions as you go. Location never fills it in, so the driver goes where you said."
+    },
+    {
+      "file": "04-home",
+      "id": "home",
+      "label": "Home",
+      "group": "browse",
+      "note": "Photos do the selling. Store status and delivery time sit together at the top, so you know before browsing that delivery takes 40–50 minutes."
+    },
+    {
+      "file": "05-menu",
+      "id": "menu",
+      "label": "Menu",
+      "group": "browse",
+      "note": "Four categories, as in the store: Flower, Pre-rolls, Vapes and Edibles. Every card has a real photo, price, brand and THC."
+    },
+    {
+      "file": "06-category",
+      "id": "category",
+      "label": "Category and filters",
+      "group": "browse",
+      "note": "Filters are plain chips under the title, one tap each. The count tells you how much is left to scroll."
+    },
+    {
+      "file": "07-search",
+      "id": "search",
+      "label": "Search",
+      "group": "browse",
+      "note": "Search matches names, brands and categories as you type. If nothing fits, the categories are right below."
+    },
+    {
+      "file": "08-product",
+      "id": "product",
+      "label": "Product",
+      "group": "browse",
+      "note": "THC, size and the lab test date come first, then the description. The 21+ warning is part of the page, not a pop-up."
+    },
+    {
+      "file": "09-product-added",
+      "id": "product-added",
+      "label": "Added to bag",
+      "group": "browse",
+      "note": "Adding keeps you browsing. The card turns into a stepper and the bag bar shows the count and subtotal."
+    },
+    {
+      "file": "10-bag",
+      "id": "bag",
+      "label": "Bag",
+      "group": "browse",
+      "note": "Cash or debit at the door and the ID check are stated before checkout, so nothing at the door is a surprise. The bag shows the items, the fee, the taxes and the total, nothing else."
+    },
+    {
+      "file": "11-sign-in",
+      "id": "sign-in",
+      "label": "Phone sign-in",
+      "group": "browse",
+      "note": "Sign-in waits until checkout: browsing never needs an account. The phone number is the account."
+    },
+    {
+      "file": "12-code",
+      "id": "code",
+      "label": "Code entry",
+      "group": "browse",
+      "note": "Six boxes, one digit each. The code from Messages is offered above the keypad, so one tap fills it and places the order."
+    },
+    {
+      "file": "13-placed",
+      "id": "placed",
+      "label": "Order placed",
+      "group": "after",
+      "note": "One clear success moment: the arrival window, the order number and what to have ready at the door."
+    },
+    {
+      "file": "14-track-preparing",
+      "id": "track-preparing",
+      "label": "Tracking: preparing",
+      "group": "after",
+      "after": {
+        "to": "track-on-the-way",
+        "ms": 5000
+      },
+      "note": "Before a driver heads out, the map shows only your home. The four steps say where the order is."
+    },
+    {
+      "file": "15-track-on-the-way",
+      "id": "track-on-the-way",
+      "label": "Tracking: on the way",
+      "group": "after",
+      "after": {
+        "to": "track-arriving",
+        "ms": 5000
+      },
+      "note": "The map shows the driver's dragon badge and your home pin, nothing else: no route and no other stops. \"2 stops before you\" sets expectations without showing where."
+    },
+    {
+      "file": "16-track-arriving",
+      "id": "track-arriving",
+      "label": "Tracking: arriving",
+      "group": "after",
+      "after": {
+        "to": "track-delivered",
+        "ms": 5000
+      },
+      "note": "When you're the next stop, the sheet leads with what you need at the door: payment and ID."
+    },
+    {
+      "file": "17-track-delivered",
+      "id": "track-delivered",
+      "label": "Tracking: delivered",
+      "group": "after",
+      "note": "Delivered, with the time and the way to the receipt. The driver's position is no longer shown."
+    },
+    {
+      "file": "18-receipt",
+      "id": "receipt",
+      "label": "Receipt",
+      "group": "after",
+      "note": "Every line, the fee and the taxes, and how it was paid. Questions go to the store's phone line."
+    },
+    {
+      "file": "19-orders",
+      "id": "orders",
+      "label": "Orders",
+      "group": "after",
+      "note": "Past orders with their photos, so you recognize them at a glance, and a one-tap reorder."
+    },
+    {
+      "file": "20-account",
+      "id": "account",
+      "label": "Account",
+      "group": "after",
+      "note": "One list: address, location, text updates and the store's phone number. Deleting the account is in the app, not behind an email."
+    },
+    {
+      "file": "21-location-off",
+      "id": "location-off",
+      "label": "Location turned off",
+      "group": "after",
+      "note": "If you skipped location, Account offers to turn it on, with the one reason it's needed."
+    },
+    {
+      "file": "22-bag-empty",
+      "id": "bag-empty",
+      "label": "Empty bag",
+      "group": "after",
+      "note": "An empty bag points back to the menu and shows what's popular, with real photos."
+    },
+    {
+      "file": "23-closed",
+      "id": "closed",
+      "label": "Store closed",
+      "group": "after",
+      "note": "When the store is closed, Home says when it opens. You can still browse; the add buttons return at 1 PM."
+    },
+    {
+      "file": "24-problem",
+      "id": "problem",
+      "label": "Order problem",
+      "group": "after",
+      "note": "When something needs a person, the app says so plainly and puts the store's number in the main button. The store sorts it out with the driver."
+    }
+  ]
+}

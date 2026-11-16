@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Magic Dragon components</title>
+<!-- Source for the Figma component sets. Each [data-comp] element becomes one variant.
+     Markup is copied from the live Gallery screens wherever a screen has it, so the
+     Figma instances in the screens match their components exactly; the remaining
+     variants (pressed, disabled, freshness, stages) are derived from those copies. -->
+<link rel="stylesheet" href="../../../prototype/magic-dragon/src/shared/base.css">
+<link rel="stylesheet" href="../../../prototype/magic-dragon/src/gallery/styles.css">
+<style>
+html,body{width:1400px;height:auto;overflow:visible}
+body{background:#F7F6F3;padding:40px}
+.group{margin-bottom:40px}
+.group h3{font:600 14px/20px Geist;margin-bottom:12px;color:#5F5A66}
+.slot{position:relative;display:inline-block;vertical-align:top;margin:0 24px 24px 0}
+.slot.phone{width:390px}
+</style>
+<link rel="stylesheet" href="components-extra.css">
+</head>
+<body>
+<div id="out"></div>
+<script>
+(async function () {
+  const P = "../../../prototype/magic-dragon/";
+  const out = document.getElementById("out");
+  const list = await fetch(P + "screens.json").then((r) => r.json());
+  const docs = [];
+  for (const s of list) {
+    const f = document.createElement("iframe");
+    f.style.cssText = "position:absolute;left:-3000px;top:0;width:390px;height:844px;border:0";
+    document.body.appendChild(f);
+    await new Promise((res) => { f.onload = res; f.src = P + s.file; });
+    await f.contentDocument.fonts.ready;
+    docs.push(f.contentDocument);
+  }
+  /* the dragon tint filters live in each screen */
+  const defs = docs.map((d) => d.querySelector("body > svg defs")).find(Boolean);
+  if (defs) document.body.insertAdjacentHTML("afterbegin", '<svg width="0" height="0" style="position:absolute" aria-hidden="true">' + defs.outerHTML + "</svg>");
+
+  const find = (sel, ok) => { for (const d of docs) for (const el of d.querySelectorAll(sel)) if (!ok || ok(el)) return el; return null; };
+  const width = (el) => el.getBoundingClientRect().width;
+  function copy(el) {
+    const c = document.importNode(el, true);
+    const a = [el, ...el.querySelectorAll("*")], b = [c, ...c.querySelectorAll("*")];
+    a.forEach((s, i) => {
+      if (s.tagName === "IMG") b[i].src = s.src;
+      if (s.tagName === "image") { const h = s.getAttribute("href"); if (h) b[i].setAttribute("href", new URL(h, s.ownerDocument.baseURI).href); }
+    });
+    return c;
+  }
+  let group = null;
+  function heading(t) { group = document.createElement("div"); group.className = "group"; group.innerHTML = "<h3>" + t + "</h3>"; out.appendChild(group); }
+  function slot(content, comp, style, cls) {
+    const s = document.createElement("div");
+    s.className = "slot" + (cls ? " " + cls : "");
+    if (style) s.style.cssText = style;
+    s.appendChild(content);
+    (comp || content).setAttribute("data-comp", "");
+    group.appendChild(s);
+    return s;
+  }
+  const html = (h) => { const t = document.createElement("template"); t.innerHTML = h.trim(); return t.content.firstChild; };
+
+  /* Button: Style x State */
+  heading("Button");
+  const btn = find(".btn.btn-primary", (el) => !el.querySelector("svg,img")) || html('<button class="btn btn-primary">Continue</button>');
+  const bw = Math.round(width(btn)) || 358;
+  for (const [style, cls] of [["Primary", "btn-primary"], ["Secondary", "btn-secondary"], ["Ghost", "btn-plain"]]) {
+    for (const state of ["Default", "Pressed", "Disabled"]) {
+      const b = copy(btn);
+      b.className = "btn " + cls + (state === "Pressed" ? " pressed" : "") + (state === "Disabled" ? " disabled" : "");
+      b.textContent = "Continue";
+      slot(b, null, "width:" + bw + "px");
+    }
+  }
+
+  heading("Chip");
+  const chip = find(".chip", (el) => !el.querySelector("svg,img"));
+  for (const on of [false, true]) {
+    const c = chip ? copy(chip) : html('<button class="chip">Indica</button>');
+    c.classList.remove("on", "selected", "active");
+    c.removeAttribute("aria-pressed");
+    if (on) c.classList.add("on");
+    slot(c);
+  }
+
+  heading("Product card");
+  const fcard = find(".fcard");
+  if (fcard) slot(copy(fcard), null, "width:" + width(fcard) + "px");
+  for (const inCart of [false, true]) {
+    const gcard = find(".grid > div", (el) => el.querySelector(":scope > .tile") && !!el.querySelector(".tstep") === inCart);
+    if (!gcard) continue;
+    const g = html('<div class="grid" style="margin:0;grid-template-columns:minmax(0,1fr)"></div>');
+    const c = copy(gcard);
+    g.appendChild(c);
+    slot(g, c, "width:" + width(gcard) + "px");
+  }
+
+  heading("Bag row");
+  for (const inBag of [true, false]) {
+    const li = find(".li", (el) => el.querySelector(".tile") && !!el.querySelector(".mini") === inBag);
+    if (!li) continue;
+    const box = html('<div class="items card" style="margin:0"></div>');
+    const c = copy(li);
+    box.appendChild(c);
+    slot(box, c, "width:" + width(li.parentElement) + "px");
+  }
+
+  heading("Add button");
+  const add = find(".add");
+  if (add) {
+    for (const dis of [false, true]) {
+      const a = copy(add);
+      if (dis) a.classList.add("disabled");
+      slot(a, null, "width:48px;height:48px");
+    }
+  }
+
+  heading("Stepper");
+  const st = find(".stepper"), mini = find(".mini");
+  if (st) slot(copy(st));
+  if (mini) slot(copy(mini));
+  const tstep = find(".tstep");
+  if (tstep) {
+    const tile = tstep.parentElement.getBoundingClientRect();
+    const box = html('<div class="tile" style="background:none;overflow:visible"></div>');
+    box.style.cssText += ";width:" + tile.width + "px;height:" + tile.height + "px";
+    const c = copy(tstep);
+    box.appendChild(c);
+    slot(box, c);
+  }
+
+  heading("Progress");
+  const segs = find(".segs", (el) => el.nextElementSibling && el.nextElementSibling.classList.contains("segs-l"));
+  if (segs) {
+    const w = width(segs);
+    ["Received", "Preparing", "On the way", "Delivered"].forEach((name, k) => {
+      const wrap = html('<div class="progress-wrap" style="display:flow-root"></div>');
+      const s = copy(segs), l = copy(segs.nextElementSibling);
+      s.style.marginTop = "0";
+      [...s.children].forEach((seg, i) => { seg.className = "seg" + (i <= k ? " done" : ""); });
+      [...l.children].forEach((sp, i) => { sp.className = i === k ? "on" : i > k ? "off" : ""; });
+      wrap.appendChild(s);
+      wrap.appendChild(l);
+      slot(wrap, null, "width:" + w + "px");
+    });
+  }
+
+  heading("Driver card");
+  const drv = find(".drv", (el) => !el.querySelector(".stack") && el.querySelector(":scope > img:not(.badge)")) || find(".drv", (el) => !el.querySelector(".stack"));
+  if (drv) {
+    const sub = drv.querySelector(".t-sub");
+    const vehicle = sub ? sub.textContent.split("·").pop().trim() : "Gray Honda Civic";
+    for (const [f, text, faded] of [["Live", '<span class="open">Live</span> · ' + vehicle, false], ["Updated", "Updated 3 min ago · " + vehicle, true], ["Last seen", "Last seen 12 min ago · " + vehicle, true]]) {
+      const c = copy(drv);
+      const s = c.querySelector(".t-sub");
+      if (s) s.innerHTML = text;
+      const img = c.querySelector("img");
+      if (img && faded) img.style.opacity = ".55";
+      slot(c, null, "width:" + width(drv) + "px");
+    }
+  }
+
+  heading("Driver badge");
+  const man = await fetch(P + "assets/manifest.json").then((r) => r.json()).catch(() => ({}));
+  const mapImg = find("svg image", (im) => /driver-marker/.test(im.getAttribute("href") || ""));
+  const marker = mapImg ? new URL(mapImg.getAttribute("href"), mapImg.ownerDocument.baseURI).href : P + "assets/" + (man["brand/driver-marker-26pt@8x.png"] || "brand/driver-marker-26pt@8x.png");
+  for (const cls of ["live", "faded"]) slot(html('<div class="driver-badge ' + cls + '"><img src="' + marker + '" alt=""></div>'));
+
+  heading("Pulse dot");
+  slot(html('<span class="pulse-dot"><span class="pd-ring"></span><span class="pd-dot"></span></span>'));
+
+  heading("Tab bar");
+  const tabbar = find(".tabbar");
+  if (tabbar) {
+    for (const tab of tabbar.querySelectorAll(".tab")) {
+      const label = tab.textContent.trim();
+      const c = copy(tabbar);
+      [...c.querySelectorAll(".tab")].forEach((t) => t.classList.toggle("on", t.textContent.trim() === label));
+      slot(c, null, "height:83px", "phone");
+    }
+  }
+
+  heading("Status bar");
+  const sb = find(".sb");
+  if (sb) {
+    slot(copy(sb), null, "height:54px", "phone");
+    const light = copy(sb);
+    light.innerHTML = light.innerHTML.replace(/#000\b/g, "#fff").replace(/#000000/g, "#ffffff");
+    slot(light, null, "height:54px;background:#5F5A66", "phone");
+  }
+
+  heading("Home indicator");
+  const hi = find(".hi");
+  if (hi) {
+    slot(copy(hi), null, "height:21px", "phone");
+    const l = copy(hi);
+    l.style.background = "#fff";
+    slot(l, null, "height:21px;background:#5F5A66", "phone");
+  }
+
+  await Promise.all([...document.images].map((i) => i.complete ? 0 : new Promise((r) => { i.onload = i.onerror = r; })));
+  await document.fonts.ready;
+  window.__ready = true;
+})();
+</script>
+</body></html>
