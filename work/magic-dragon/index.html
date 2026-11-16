@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Magic Dragon case study, Dave Aiello</title>
+  <meta name="description" content="Designing a regulated delivery app for iPhone: age and location in one step, tracking that protects every customer, and a hand-drawn loading moment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="name" href="/">Dave Aiello</a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="/" aria-current="page">Design</a>
+        <a href="/development/">Development</a>
+        <a href="/about/">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-head wrap">
+      <h1>Magic Dragon: ordering a regulated delivery from your phone</h1>
+      <p class="lede">Magic Dragon delivers cannabis to adults in Massachusetts. Every order has rules attached: proof of age, an ID check at the door, a daily purchase limit, cash or debit only, and no discounts in advertising. I designed the iPhone app so those rules feel like care, not paperwork, and so the one question every customer has is always answered: when will it get here?</p>
+      <div class="actions">
+        <a class="button" href="/prototype/magic-dragon/">Open the prototype</a>
+        <a class="button secondary" href="#figma">Figma file</a>
+      </div>
+      <dl class="facts-row">
+        <div><dt>Type</dt><dd>Real product, 2026</dd></div>
+        <div><dt>Platform</dt><dd>iOS first, plus the mobile website</dd></div>
+        <div><dt>My role</dt><dd>Founder and design lead: product decisions, flows, UI, motion, Figma system</dd></div>
+        <div><dt>Scope</dt><dd>24 screens, 4 flows, 194 prototype links, a Figma system</dd></div>
+      </dl>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <figure class="hero-figure">
+          <img src="img/hero.jpg" alt="Three iPhone screens: the Magic Dragon launch screen, Home with the delivery time and product photos, and order tracking with the driver" width="1600" height="900">
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>The problem</h2>
+        <p>Ordering delivery on a phone is a solved pattern. Ordering a product the state regulates is not. Three constraints shaped everything:</p>
+        <ul>
+          <li><b>The platforms disagree.</b> Apple allows licensed cannabis ordering in apps limited to legal areas. Google Play bans it outright. One codebase had to give iPhone customers a native app and Android customers an installable website, without designing two products.</li>
+          <li><b>The state sets the copy.</b> Massachusetts limits cannabis advertising, so the usual levers (discount banners, promo tabs, "deals for you") are off the table. The interface has to sell with clarity and photography instead.</li>
+          <li><b>Every order meets a person at a door.</b> A driver checks ID and collects payment. Customers want to know exactly when, and other customers on the same route deserve privacy.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Goals</h2>
+        <div class="grid-2">
+          <div class="card"><h3>Always answer "when"</h3><p>A delivery time on Home before anything else, and a live, honest one after ordering.</p></div>
+          <div class="card"><h3>Ask once, for the right thing</h3><p>Age and location up front in a single step, and nothing more until it's needed.</p></div>
+          <div class="card"><h3>No surprises at the door</h3><p>Payment, ID and the total are settled in the app before the driver arrives.</p></div>
+          <div class="card"><h3>Protect everyone on the route</h3><p>Show customers their driver only when it helps them, and never anyone else's stop.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2>Key decisions</h2>
+
+        <div class="decision">
+          <div>
+            <h3>Loading becomes the brand moment</h3>
+            <p>The app's first second used to be a rocking logo on a gradient while the menu loaded. Now a pen draws the dragon while the store's menu comes in. The head comes first, so it reads as the dragon almost immediately, and the closed eyes are drawn last. If the menu is slow, the lines fade back and redraw calmly instead of showing a spinner, and when the data arrives the pen finishes from wherever it is. It never jumps. With Reduce Motion on, the finished mark appears without the drawing.</p>
+          </div>
+          <div class="shots">
+            <figure>
+              <video autoplay muted loop playsinline preload="metadata" width="390" height="844" poster="img/splash-draw-poster.png" aria-label="The Magic Dragon dragon being drawn as the app loads">
+                <source src="img/splash-draw-loop.webm" type="video/webm">
+                <source src="img/splash-draw-loop.mp4" type="video/mp4">
+              </video>
+              <figcaption>Draws while the menu loads</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>Age and location in one step</h3>
+            <p>Two questions every customer has to answer go on one welcome screen: are you 21 or older, and roughly where are you? The phone's rough location, rounded to about a kilometer, only decides which store's menu to show. The exact delivery address is typed later, when it matters. "Not now" never blocks anyone: they type an address and carry on.</p>
+          </div>
+          <div class="shots">
+            <figure><img src="img/welcome.png" alt="Welcome screen with the 21 or older check and a share location step" loading="lazy" width="390" height="844"><figcaption>One welcome step</figcaption></figure>
+            <figure><img src="img/address.png" alt="Typing a delivery address with suggestions" loading="lazy" width="390" height="844"><figcaption>Address when it matters</figcaption></figure>
+          </div>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>Lead with when, not deals</h3>
+            <p>With discount banners off the table, Home leads with the most useful fact instead: the shop is open and an order arrives in 40 to 50 minutes, next to the delivery address. Below it, real product photography does the work a promo banner would, and "Order again" puts last week's order one tap away.</p>
+          </div>
+          <div class="shots">
+            <figure><img src="img/home.png" alt="Home screen with the delivery time, categories, featured products and order again" loading="lazy" width="390" height="844"><figcaption>Home</figcaption></figure>
+            <figure><img src="img/category.png" alt="Flower category with product photos and filters" loading="lazy" width="390" height="844"><figcaption>Category</figcaption></figure>
+          </div>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>Product pages answer three questions</h3>
+            <p>How strong is it, how much is it, and was it tested? THC, size and the lab-tested date sit in one row under the name, with the state's safety warning in plain text below. The add button carries the price, so the total is never a surprise.</p>
+          </div>
+          <div class="shots"><figure><img src="img/product.png" alt="Product page with THC, size and lab-tested date" loading="lazy" width="390" height="844"></figure></div>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>The bag settles what happens at the door</h3>
+            <p>Before checkout, the bag says how the driver gets paid (cash or debit) and that they'll check ID, with the estimated total. Customers who know that ahead of time aren't caught without ID or cash when the driver arrives.</p>
+          </div>
+          <div class="shots"><figure><img src="img/bag.png" alt="Bag with pay at the door and ID check notes and the total" loading="lazy" width="390" height="844"></figure></div>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>Tracking that protects everyone on the route</h3>
+            <p>A driver carries several orders at once. Showing a live map from the moment they leave would show customers where other people live. So tracking leads with the delivery window and a simple count, "2 stops before you", and the map appears only on the last leg. It shows the driver and your home, never the route or anyone else's stop. If the driver's location goes stale, their marker fades and says when it was last seen, so it never looks live when it isn't.</p>
+          </div>
+          <div class="shots">
+            <figure><img src="img/tracking-preparing.png" alt="Tracking while the order is being prepared" loading="lazy" width="390" height="844"><figcaption>Preparing</figcaption></figure>
+            <figure><img src="img/tracking-driver.png" alt="Tracking with the driver on the last leg" loading="lazy" width="390" height="844"><figcaption>Last leg</figcaption></figure>
+          </div>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>A driver marker you can recognize</h3>
+            <p>The driver appears as the dragon in a purple badge. In my first version the dragon filled the badge and crowded its white ring, so at map size it lost its shape. A smaller dragon with clear purple around it reads at a glance on light and dark maps alike.</p>
+          </div>
+          <div class="shots"><figure><img src="img/marker-iterations.jpg" alt="The driver badge with a larger dragon next to the final, smaller dragon, on light and dark maps" loading="lazy" width="1600" height="800"></figure></div>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>Edge cases get designed, not left as errors</h3>
+            <p>A closed shop says when it opens and keeps the menu browsable. An order problem says what happened and gives the next step ("Call the store"). Declining location just means typing an address, and Account offers a quiet way to turn location on later.</p>
+          </div>
+          <div class="shots">
+            <figure><img src="img/closed.png" alt="Store closed state showing when it opens" loading="lazy" width="390" height="844"><figcaption>Closed</figcaption></figure>
+            <figure><img src="img/problem.png" alt="Order problem with a call the store action" loading="lazy" width="390" height="844"><figcaption>Something went wrong</figcaption></figure>
+          </div>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>Deleting an account without losing what the law requires</h3>
+            <p>Apple requires in-app account deletion. The state requires keeping records for age checks and product recalls. Delete account erases email, saved addresses, favorites and marketing consent, and keeps only name, phone, date of birth and past orders, never used for marketing. The screen says exactly that, in two short lists, before anything happens.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>The same care on the website</h2>
+        <p>Android customers order on the website, so the order page got the same treatment. The old confirmation stacked a headline, a check mark, a yellow notice and a gray summary panel. The redesign leads with the same live status card as the app, then one card of order details and a single next step.</p>
+      </div>
+      <div class="wrap">
+        <figure class="hero-figure"><img src="img/before-after.jpg" alt="The website order confirmation before and after the redesign" loading="lazy" width="1600" height="900"></figure>
+      </div>
+      <div class="wrap prose">
+        <p>Earlier in the year I led a polish pass on the storefront before launch. A few of the changes:</p>
+        <ul>
+          <li>The age check went from two paragraphs of legal text to one sentence, and the server stopped sending the menu until it's answered.</li>
+          <li>Minimum-order warnings stopped being vague and started saying exactly how much more to add.</li>
+          <li>Placeholder lab results stopped appearing as if they were real. With no real lab data, the page shows nothing rather than something that looks official.</li>
+          <li>Checkout became safe to tap twice: a repeated order returns the one already placed instead of creating a second.</li>
+        </ul>
+        <div class="shots july">
+          <figure><img src="img/july-age-before.png" alt="Age check before: two paragraphs of legal text" loading="lazy" width="390" height="844"><figcaption>Age check, before</figcaption></figure>
+          <figure><img src="img/july-age-after.png" alt="Age check after: one sentence" loading="lazy" width="390" height="844"><figcaption>After</figcaption></figure>
+          <figure><img src="img/july-minimum-before.png" alt="Cart before: a vague note about confirming the address later" loading="lazy" width="390" height="844"><figcaption>Minimum order, before</figcaption></figure>
+          <figure><img src="img/july-minimum-after.png" alt="Cart after: Add $8 more" loading="lazy" width="390" height="844"><figcaption>After</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2>The journey</h2>
+        <figure class="hero-figure"><img src="img/journey.jpg" alt="Six screens in order: launch, welcome, browse, product, bag and tracking" loading="lazy" width="1600" height="700"></figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2>Try it</h2>
+        <p class="muted">Every button works. On a phone it fills the screen.</p>
+        <div class="proto-frame">
+          <iframe src="/prototype/magic-dragon/?frame=launch" title="Magic Dragon clickable prototype" loading="lazy"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="figma">
+      <div class="wrap prose">
+        <h2>The Figma file</h2>
+        <p>The Figma file has every screen as editable layers, wired up as a clickable prototype, and built on a small design system:</p>
+        <ul>
+          <li><b>Color variables</b> for surfaces, text, brand purple, the add-to-bag yellow and status colors.</li>
+          <li><b>Text styles</b> in Geist, from the delivery-time display down to the fine print.</li>
+          <li><b>Components</b> with variants: Button (style and state), Chip, Product card, Add and stepper, the four-step order progress, Driver card (live, updated, last seen), Driver badge and Tab bar.</li>
+          <li><b>Sections</b> for onboarding, shopping, account, orders and tracking, and edge cases, each frame annotated with the reasoning behind it.</li>
+          <li><b>A motion page</b> with timing specs for the drawn dragon, the open-now pulse and the driver marker.</li>
+        </ul>
+        <figure><img src="img/design-system.jpg" alt="Design system board with colors, type, buttons, product cards, the order progress and the driver badge" loading="lazy" width="1600" height="1196"></figure>
+        <p><a class="todo" href="#">Figma link goes here once the file is published</a></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>How I worked</h2>
+        <p>I run Magic Dragon, so every decision here was mine to make and mine to live with. I set the rules, flows and copy, and used an AI coding assistant to build them into the real app and into this prototype, which made it cheap to try a screen, look at it on a phone and change it the same day. The driver badge went through that loop twice before it read clearly at map size.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Results and what's next</h2>
+        <ul>
+          <li class="todo">Real numbers go here: orders delivered, repeat customers, support contacts about "where's my order".</li>
+          <li>The iPhone app is in pre-release; the website serves Android and desktop customers today.</li>
+          <li>Next, I'd measure how often customers open tracking before the last leg, whether the stop count reduces "where's my order" calls, and how many first orders finish without anyone tapping Not now.</li>
+        </ul>
+        <p class="small">Product names, photos and prices are from the live menu. Customer names, addresses and phone numbers are made up.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span><a href="/">All work</a></span>
+      <span><a href="/about/#contact">Contact</a></span>
+    </div>
+  </footer>
+</body>
+</html>

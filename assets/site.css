@@ -131,6 +131,12 @@ p { margin: 0 0 16px; }
 .shots figure { margin: 0; flex: 1; max-width: 260px; }
 .shots img { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
 .shots figcaption { font-size: 13px; color: var(--text-3); margin-top: 8px; text-align: center; }
+.shots video { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.shots.july figure { max-width: 200px; }
+.hero-figure { margin: 0; }
+.hero-figure img { display: block; width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--line); }
+.prose figure { margin: 24px 0 0; }
+.prose figure img { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line); }
 
 .strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
 .strip figure { margin: 0; }
