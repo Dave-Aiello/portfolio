@@ -4,11 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dave Aiello, product designer</title>
-  <meta name="description" content="Mobile product design for moments where mistakes cost money: crypto, payments and regulated delivery.">
+  <meta name="description" content="Dave Aiello designs web and mobile products: a delivery marketplace, the back office its stores run on, and crypto and payments apps.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    .project-art.cover { padding: 0; }
+    .project-art.cover img { width: 100%; max-width: none; height: 100%; object-fit: cover; object-position: center; border: 0; border-radius: 0; }
+    .project-art.landscape { justify-content: flex-start; padding: 40px 0 0 40px; }
+    .project-art.landscape img { width: auto; max-width: none; height: 100%; border-radius: 12px 0 0 0; border-right: 0; border-bottom: 0; }
+    .project-art.landscape img:nth-child(2), .project-art.cover img:nth-child(2) { margin-top: 0; }
+    @media (max-width: 860px) { .project-art.landscape { padding: 24px 0 0 24px; } }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -24,8 +32,8 @@
 
   <main>
     <section class="intro wrap">
-      <h1>I design mobile products for moments where mistakes cost money.</h1>
-      <p class="lede">I'm a product designer and two-time founder. I've worked on crypto products since 2015, and today I lead design on a delivery platform: the customer storefront, a driver app and the dispatch board.</p>
+      <h1>I design web and mobile products that make complex work simple.</h1>
+      <p class="lede">I'm a product designer and two-time founder. Today I lead design on a delivery marketplace: the web storefront customers order from, the dispatch board and back office the stores run on, and a driver app. Before that I designed crypto products, starting in 2015.</p>
       <div class="meta">
         <span>Open to product design roles</span>
         <span>Remote, or hybrid near Baltimore–DC or Providence–Boston</span>
@@ -34,6 +42,17 @@
     </section>
 
     <section class="work wrap" aria-label="Selected work">
+      <a class="project" href="/work/magic-dragon-web/">
+        <div class="project-text">
+          <h2>Magic Dragon on the web: a delivery marketplace and its back office</h2>
+          <p>Customers order on the storefront, dispatchers run the night on a live board, and each store runs itself from the back office. Two journeys and the admin side, designed from scratch and in production.</p>
+          <span class="project-link">Read the case study</span>
+          <span class="project-meta">Real product, in production · Web · Storefront, dispatch board, back office</span>
+        </div>
+        <div class="project-art cover">
+          <img src="/work/magic-dragon-web/img/card.jpg" alt="The back office setup and launch check, the dispatch board and the storefront on a phone" loading="lazy" width="1150" height="880">
+        </div>
+      </a>
       <a class="project" href="/work/magic-dragon/">
         <div class="project-text">
           <h2>Magic Dragon: ordering a regulated delivery from your phone</h2>
@@ -48,6 +67,17 @@
         </div>
       </a>
 
+      <a class="project" href="/development/the-main-vine/">
+        <div class="project-text">
+          <h2>The Main Vine: every giant pumpkin since 2005, in one family tree</h2>
+          <p>Growers pick seeds by pedigree, but weigh-off results list parents as hand-typed names. This site links 65,581 entries into family trees you can search and explore.</p>
+          <span class="project-link">Read the case study</span>
+          <span class="project-meta">Personal project, live · Web app · Data, API, design and front end</span>
+        </div>
+        <div class="project-art landscape">
+          <img src="/development/img/vine-ped.webp" alt="A pedigree tree of seed and pollinator cards with a side panel for the selected fruit" loading="lazy" width="1600" height="831">
+        </div>
+      </a>
       <a class="project" href="/work/steady/">
         <div class="project-text">
           <h2>Steady: a first crypto purchase in an everyday money app</h2>

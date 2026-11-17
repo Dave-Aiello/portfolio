@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Magic Dragon on the web, Dave Aiello</title>
+  <meta name="description" content="Designing a delivery marketplace end to end: the customer's storefront, the dispatcher's board and the back office each store runs itself from.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    .wide { margin: 24px 0 0; }
+    .wide img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+    .wide figcaption { font-size: 13px; color: var(--text-3); margin-top: 8px; }
+    .decision.stack { grid-template-columns: minmax(0, 1fr); gap: 0; align-items: start; }
+    .decision.stack p { max-width: 680px; }
+    .jump { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 20px; font-size: 15px; }
+    .jump a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="name" href="/">Dave Aiello</a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="/" aria-current="page">Design</a>
+        <a href="/development/">Development</a>
+        <a href="/about/">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-head wrap">
+      <h1>Magic Dragon on the web: a delivery marketplace and the back office behind it</h1>
+      <p class="lede">Magic Dragon is a delivery platform for licensed stores. Customers order on the web storefront, dispatchers run the night on a live board, drivers deliver with a phone app, and each store runs itself from the back office. I designed all of it from scratch, and it's in production today.</p>
+      <dl class="facts-row">
+        <div><dt>Type</dt><dd>Real product, in production</dd></div>
+        <div><dt>Platform</dt><dd>Web storefront, dispatch board and back office, plus an Android driver app</dd></div>
+        <div><dt>My role</dt><dd>Founder and design lead: research, flows, UI, copy and the design system</dd></div>
+        <div><dt>People</dt><dd>Customers, dispatchers, drivers, store owners and managers</dd></div>
+      </dl>
+      <nav class="jump" aria-label="On this page">
+        <a href="#customer">The customer's journey</a>
+        <a href="#store">The store's journey</a>
+        <a href="#admin">The back office</a>
+        <a href="#process">How I work</a>
+      </nav>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <figure class="hero-figure">
+          <img src="img/hero.jpg" alt="Three Magic Dragon screens: the back office setup and launch check, the dispatch board with driver lanes, and the storefront on a phone asking for a delivery address" width="1600" height="900">
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>The problem</h2>
+        <p>Every order passes through people who never see each other's screens, under rules the state sets.</p>
+        <ul>
+          <li><b>Customers</b> want an honest time and total. They also have to prove their age, stay under a daily purchase limit and show ID at the door.</li>
+          <li><b>Dispatchers</b> match a night of orders to a few drivers in real time, and every change has to reach the driver.</li>
+          <li><b>Store owners</b> have a long list to get right before the first order: license, menu, delivery zones, hours, payments, texts and staff logins.</li>
+          <li><b>The platform</b> is built for more than one store, so each store's customers, sales and settings stay its own.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Who it's for</h2>
+        <div class="grid-2">
+          <div class="card"><h3>Customer</h3><p>Orders from a phone, usually for tonight. Wants a time, a total and no surprises at the door.</p></div>
+          <div class="card"><h3>Dispatcher</h3><p>Runs the delivery night from one screen: assigns orders, reorders stops and answers "where's my order?"</p></div>
+          <div class="card"><h3>Driver</h3><p>Carries several orders at once. Checks ID, collects payment and gets a signature at every door.</p></div>
+          <div class="card"><h3>Store owner or manager</h3><p>Sets up the store, manages staff and drivers, and keeps the business compliant.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="customer">
+      <div class="wrap">
+        <h2>The customer's journey</h2>
+        <p class="muted">Browse, fill a bag, give an address, check out, track. The rules ride along without getting in the way.</p>
+
+        <div class="decision">
+          <div>
+            <h3>Browse first, address when it matters</h3>
+            <p>Anyone can browse and fill a bag without an address. The first time they add something, the address form opens with the item already in the bag and a close button that never blocks them. The top bar keeps offering an arrival time in exchange for the address. Each store picks this behavior in the back office: don't ask, prompt, or require an address before adding.</p>
+          </div>
+          <div class="shots">
+            <figure><img src="img/sf-home-phone.webp" alt="Storefront home on a phone with the address prompt in the header and popular products" loading="lazy" width="780" height="1328"><figcaption>Home</figcaption></figure>
+            <figure><img src="img/sf-address-phone.webp" alt="The delivery address form over the menu after the first item was added, with the bag showing one item" loading="lazy" width="780" height="1328"><figcaption>After the first add</figcaption></figure>
+          </div>
+        </div>
+
+        <div class="decision stack">
+          <div>
+            <h3>Product details without losing your place</h3>
+            <p>A product opens over the menu instead of on a new page, so closing it puts you back where you were. It answers how much, how strong and how many are left, and the price sits on the button. The quick view still gets its own address, so a link to a product works.</p>
+          </div>
+          <figure class="wide"><img src="img/sf-quickview.webp" alt="Product quick view over the menu: photo, brand, price, quantity stepper, Add to bag with the price, and brand, category, size and stock rows" loading="lazy" width="1600" height="1000"></figure>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>The limit is a meter, not an error</h3>
+            <p>Massachusetts caps how much one person can buy in a day. The bag shows how much of the limit this order uses, so nobody meets the rule as an error at checkout.</p>
+          </div>
+          <div class="shots">
+            <figure><img src="img/sf-bag2-phone.webp" alt="Bag with one item and a purchase limit meter reading 6% used" loading="lazy" width="780" height="673"><figcaption>Bag</figcaption></figure>
+          </div>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>Sign in with a text code</h3>
+            <p>No passwords for customers. They type a phone number and get a one-time code, and the texting consent sits right under the button in plain words.</p>
+          </div>
+          <div class="shots">
+            <figure><img src="/development/img/sf-login-phone.webp" alt="Log in or sign up with a phone number and a Send code button" loading="lazy" width="390" height="844"><figcaption>Sign in</figcaption></figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="store">
+      <div class="wrap">
+        <h2>The store's journey</h2>
+        <p class="muted">An order lands on the dispatch board the moment it's placed. From there it's the store's job to get it to the door.</p>
+
+        <div class="decision stack">
+          <div>
+            <h3>One board for the whole night</h3>
+            <p>Unassigned orders on the left, one lane per driver. Drag a card into a lane to assign it, drag within a lane to reorder the stops, and every card shows its arrival time. Changes show up on every open board and on the driver's phone, so two dispatchers can work the same night.</p>
+          </div>
+          <figure class="wide"><img src="/development/img/md-board-drag.webp" alt="Dispatch board with an unassigned column and two driver lanes, one order being dragged into a lane" loading="lazy" width="1440" height="600"></figure>
+        </div>
+
+        <div class="decision stack">
+          <div>
+            <h3>Everything about an order, one click from the board</h3>
+            <p>The order opens over the board. Calling the customer, the address, the items and the total come first. Payment, arrival time and messages, timing, the driver's manifest and history fold away until needed. Rare actions live in a More actions menu, and Cancel order sits apart from everything else.</p>
+          </div>
+          <figure class="wide"><img src="/development/img/md-order-detail.webp" alt="Order detail panel over the dispatch board with customer details, items and totals, notes, and folding sections" loading="lazy" width="1440" height="828"></figure>
+        </div>
+
+        <div class="decision stack">
+          <div>
+            <h3>A wallboard for the room</h3>
+            <p>A read-only screen for the store's TV, showing only the counts that need someone to act: unassigned, on hold, past the promised time, payment pending. Customer and employee details are left off on purpose, because anyone in the room can see it.</p>
+          </div>
+          <figure class="wide"><img src="/development/img/md-wallboard.webp" alt="Operations wallboard with large counts for active, unassigned, on hold, past ETA, payment pending, manifest issues, drivers available and ETA due soon" loading="lazy" width="1600" height="557"></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="admin">
+      <div class="wrap">
+        <h2>The back office</h2>
+        <p class="muted">Each store runs itself from the back office: settings, staff, drivers, reports and compliance. Most of my work here was making a long list of settings feel short.</p>
+
+        <div class="decision stack">
+          <div>
+            <h3>A launch check instead of a manual</h3>
+            <p>A new store sees every step it needs before opening, in plain words, each with a link to the screen that fixes it. Needed, Check and Done are read from what's already saved, so the list is never out of date.</p>
+          </div>
+          <figure class="wide"><img src="img/bo-setup.webp" alt="Setup and launch check listing steps such as business name and license number, hub address, staff logins and delivery zones, each marked Needed, Check or Done with an Open link" loading="lazy" width="1600" height="1000"></figure>
+        </div>
+
+        <div class="decision stack">
+          <div>
+            <h3>Rules explained where you set them</h3>
+            <p>Settings are grouped by job, like Ordering &amp; checkout or Delivery service. Each choice says what customers will experience, and rules the state requires are labeled as required instead of being tucked away.</p>
+          </div>
+          <figure class="wide"><img src="img/bo-ordering.webp" alt="Ordering and checkout settings with three address options explained in plain words and a delivery rule marked Required in Massachusetts" loading="lazy" width="1600" height="1000"></figure>
+        </div>
+
+        <div class="decision stack">
+          <div>
+            <h3>Integrations in four tabs</h3>
+            <p>Texting, email, payments, marketplaces and reporting tools used to share one long page. I split them into Communications, Payments, Marketplaces and Reporting, with one folding row per provider that shows its status at a glance.</p>
+          </div>
+          <figure class="wide"><img src="img/bo-integrations.webp" alt="Integrations settings with Communications, Payments, Marketplaces and Reporting tabs and one folding row per provider" loading="lazy" width="1600" height="1000"></figure>
+        </div>
+
+        <div class="decision stack">
+          <div>
+            <h3>Access the owner controls</h3>
+            <p>Owners add logins and custom roles. If Magic Dragon support needs to help, they have to ask: nobody gets in without the owner's yes, the owner picks their role, and the access ends on its own. Magic Dragon's own staff console, where stores are set up and billed, never shows a store's sales or customers.</p>
+          </div>
+          <figure class="wide"><img src="img/bo-access.webp" alt="Admin access with the store's logins, a Magic Dragon access section that requires the owner's approval, and custom roles" loading="lazy" width="1600" height="1000"></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="process">
+      <div class="wrap prose">
+        <h2>How I work</h2>
+        <ul>
+          <li><b>Mockups before code.</b> Any substantial change starts as clickable mockups I review at real screen sizes before it's built.</li>
+          <li><b>A written design system.</b> One guide for the storefront and one for the internal tools: white title bars, secondary actions in ⋯ menus, labels above outlined fields, 8 px corners, and no decoration that doesn't carry information.</li>
+          <li><b>AI in the workflow.</b> I use AI agents to run audits, draft mockups and build approved designs into the real app. The decisions, rules and copy stay mine.</li>
+          <li><b>Audits that turn into small fixes.</b> Regular passes over the storefront, sign-up and login, and inspection readiness end as short lists of changes.</li>
+          <li><b>Small releases.</b> Changes ship several times a day, so a fix for something a dispatcher hit tonight can be live tomorrow.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>What's next</h2>
+        <p>Next I'd measure how many first orders start without an address and still finish, and how long a new store takes to clear the launch check.</p>
+        <p>The engineering side of the <a href="/development/storefront/">storefront</a> and the <a href="/development/dispatch-board/">dispatch board</a> is on the Development tab. The iPhone app has <a href="/work/magic-dragon/">its own case study</a>.</p>
+        <p class="small">Screens come from a test copy of the live app with sample products, drivers and orders. Names, addresses and phone numbers are made up.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span><a href="/">All work</a></span>
+      <span><a href="/about/#contact">Contact</a></span>
+    </div>
+  </footer>
+</body>
+</html>
