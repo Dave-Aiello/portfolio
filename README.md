@@ -39,8 +39,8 @@ node figma/build.js
 
 The plugin builds the Magic Dragon iPhone app (Gallery direction, 24 screens) as editable layers on four pages:
 
-- **Cover**: title, the dragon mark and a one-line description. It is also set as the file thumbnail.
-- **Design system**: the "Magic Dragon" colour variables as swatches, the text styles with samples, and 14 components, 13 of them sets with variants (Button, Chip, Product card, Bag row, Add button, Stepper, Progress, Driver card, Driver badge, Pulse dot, Tab bar, iOS keyboard, Status bar, Home indicator).
+- **Cover**: title, the M app icon and a one-line description. It is also set as the file thumbnail.
+- **Design system**: the two marks (the dragon, used on the launch screen only, and the M app icon for everything under 60 pt), the "Magic Dragon" color variables as swatches, the text styles with samples, and 14 components, 13 of them sets with variants (Button, Chip, Product card, Bag row, Add button, Stepper, Progress, Driver card, Driver badge, Pulse dot, Tab bar, iOS keyboard, Status bar, Home indicator).
 - **Screens**: every screen in sections (Onboarding, Shopping, Account, Orders and tracking, Edge cases), each with its design note underneath, built from those components and wired as the "Prototype" flow starting at Launch.
 - **Motion**: poster frames and timing specs for the hand-drawn splash, the pulsing open dot and the driver marker glide.
 
@@ -68,7 +68,7 @@ node figma/magic-dragon/build.js                  # writes figma/magic-dragon/pl
 node figma/magic-dragon/test/run.js --preview     # runs the plugin against a mock Figma API, redraws the previews
 ```
 
-`sync.js` reads from `~/claude-scratch/consumer-app/directions` unless you pass another folder. New screens are picked up automatically: their titles, design notes and timed steps come from `src/gallery/direction.json`, links from each tap's `data-go`, and the section they land in from `figma/magic-dragon/screens.config.js`, which also names the colours, text styles and components. `build.js` starts its own local server; it prints which component uses, if any, had to be drawn as plain frames and why.
+`sync.js` reads from `~/claude-scratch/consumer-app/directions` unless you pass another folder. New screens are picked up automatically: their titles, design notes and timed steps come from `src/gallery/direction.json`, links from each tap's `data-go`, and the section they land in from `figma/magic-dragon/screens.config.js`, which also names the colors, text styles and components. `build.js` starts its own local server; it prints which component uses, if any, had to be drawn as plain frames and why.
 
 ## Placeholders
 

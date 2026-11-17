@@ -1,5 +1,5 @@
 /* What build.js cannot read from the HTML: how screens are grouped on the Screens
-   page, the design note under each frame, and names for colours, text styles and
+   page, the design note under each frame, and names for colors, text styles and
    components. Patterns match the screen id (the file name without its number).
    New screens land in the first section whose pattern matches; the first note
    pattern that matches wins, so specific patterns come first. A "note" field on a

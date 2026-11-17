@@ -11,11 +11,10 @@ html,body{width:1920px;height:960px;overflow:hidden;background:#F7F6F3}
 .eyebrow{font-size:20px;line-height:28px;font-weight:500;color:var(--ink2)}
 .title{margin-top:20px;font-size:128px;line-height:128px;font-weight:600;letter-spacing:-0.035em;color:var(--ink)}
 .desc{margin-top:36px;width:900px;font-size:30px;line-height:42px;color:var(--ink2);letter-spacing:-0.01em}
-.foot{position:absolute;left:160px;bottom:96px;display:flex;align-items:center;gap:16px;font-size:18px;line-height:24px;font-weight:500;color:var(--ink2)}
-.foot img{width:44px;height:44px;border-radius:10px}
+.foot{position:absolute;left:160px;bottom:100px;display:flex;align-items:center;gap:16px;font-size:18px;line-height:24px;font-weight:500;color:var(--ink2)}
 .foot .dot{color:var(--ink3)}
-.mark{position:absolute;right:190px;top:50%;width:520px;margin-top:-255px}
-.mark img{width:520px}
+.mark{position:absolute;right:240px;top:50%;width:360px;height:360px;margin-top:-180px}
+.mark img{width:360px;height:360px}
 .rule{position:absolute;left:160px;right:160px;bottom:160px;height:1px;background:var(--line)}
 </style>
 </head>
@@ -27,20 +26,17 @@ html,body{width:1920px;height:960px;overflow:hidden;background:#F7F6F3}
       <div class="title">Magic Dragon</div>
       <div class="desc">A native iPhone app for licensed cannabis delivery in Massachusetts: a photo-first menu, a short checkout, and live tracking to the door.</div>
     </div>
-    <div class="mark"><img class="mk" id="mark" alt="Magic Dragon mark"></div>
+    <div class="mark"><img id="mark" alt="Magic Dragon app icon"></div>
     <div class="rule"></div>
-    <div class="foot"><img id="icon" alt="App icon"><span>magicdragon.app</span><span class="dot">·</span><span>Gallery direction</span></div>
+    <div class="foot"><span>magicdragon.app</span><span class="dot">·</span><span>Gallery direction</span></div>
   </div>
 </section>
 <script src="harvest.js"></script>
 <script>
 (async function () {
   const h = await window.harvest();
-  const mk = h.find("img.mk");
-  /* the regular mark (vector), so it stays sharp at cover size */
-  document.getElementById("mark").src = h.asset("brand/mark/dragon-mark.svg");
-  const man = await fetch(h.P + "assets/manifest.json").then((r) => r.json()).catch(() => ({}));
-  document.getElementById("icon").src = h.P + "assets/" + (man["brand/app-icon.png"] || "brand/app-icon.png");
+  /* the M app icon is the main mark; the dragon appears only on the launch screen */
+  document.getElementById("mark").src = h.asset("brand/m-icon.png");
   await h.settle();
   window.__ready = true;
 })();

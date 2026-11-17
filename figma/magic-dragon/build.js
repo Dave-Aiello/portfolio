@@ -568,7 +568,7 @@ function round(key, v) {
   let links = 0;
   screens.forEach((s) => walk(s.tree, (n) => { if (n.go) links++; }));
   console.log("screens:", screens.length, "(" + ids.join(", ") + ")");
-  console.log("component variants from the sheet:", components.length, "| text styles:", typeStyles.length, "| colour tokens:", tokens.length);
+  console.log("component variants from the sheet:", components.length, "| text styles:", typeStyles.length, "| color tokens:", tokens.length);
   console.log("images:", Object.keys(images).length, "embedded,", (imgBytes / 1e6).toFixed(2), "MB base64 at", factor + "x");
   console.log("prototype taps:", links, "| flow starts at", start, "| moves on by itself:", autos.map((a) => a.from + " -> " + a.to + " (" + a.seconds + " s)").join(", ") || "none");
   console.log("plugin code.js:", (code.length / 1e6).toFixed(2), "MB | built in", ((Date.now() - t0) / 1000).toFixed(1), "s");
