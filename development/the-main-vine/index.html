@@ -75,8 +75,8 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>A pedigree explorer built from scratch</h2>
-        <p>The tree is the heart of the site, and no charting library draws it. Each fruit is a real HTML card with links and buttons, positioned absolutely; the connecting lines are thin elements placed from the same coordinates.</p>
+        <h2>The family tree</h2>
+        <p>The family tree is the main part of the site, and I drew it without a charting library. Each fruit is a real HTML card with links and buttons, positioned absolutely; the connecting lines are thin elements placed from the same coordinates.</p>
         <figure class="dev-figure">
           <img src="/development/img/vine-ped.webp" alt="Pedigree of 3156 Wallace 2026, three generations back, with seed and pollinator cards, what each pollinator plant grew, and a side panel for the selected fruit." width="1600" height="831" loading="lazy" decoding="async">
           <figcaption>The pedigree of the heaviest pumpkin on record. Each card shows weight, over-the-top measurement and how it did against the weight chart.</figcaption>
@@ -112,7 +112,7 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Inbreeding, worked out in the browser</h2>
+        <h2>Working out inbreeding</h2>
         <p>Every fruit page shows its inbreeding coefficient, how many generations are on record, and how many distinct ancestors. The coefficient is the kinship of the fruit’s two parents, and kinship is defined recursively: the kinship of two fruits is the average kinship of the younger one’s parents with the older one. Memoizing each pair keeps a 13-generation tree fast.</p>
         <pre tabindex="0"><code>const kin = (a, b) =&gt; {
   if (a == null || b == null) return 0;
@@ -135,7 +135,7 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>A small API in front of Postgres</h2>
+        <h2>The API</h2>
         <ul>
           <li>One Vercel Function, <code>/api/v1</code>, answers six questions: <code>meta</code>, <code>top</code>, <code>fruit</code>, <code>search</code>, <code>grower</code> and <code>results</code>. It queries Neon Postgres through its serverless driver.</li>
           <li>Responses use the short field names the front end reads directly, which keeps payloads small for a 65,000-row dataset.</li>

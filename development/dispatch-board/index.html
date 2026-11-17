@@ -26,7 +26,7 @@
   <main>
     <section class="case-head wrap">
       <h1>Magic Dragon dispatch board</h1>
-      <p class="lede">Delivery operators run their night from this board. Each driver gets a lane. Dispatchers drag orders into lanes, reorder stops, and see a real ETA on every card.</p>
+      <p class="lede">Dispatchers use this board to send orders out with drivers. Each driver has a column. Dispatchers drag orders into a driver's column, change the order of stops, and see an ETA on every card.</p>
       <div class="actions">
         <a class="button" href="/development/jquery-dispatch-board/">Try the jQuery rebuild</a>
         <a class="button secondary" href="https://magicdragonsoftware.com">Product site</a>
@@ -55,22 +55,22 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>The job of the board</h2>
-        <p>A delivery night comes down to three questions: what's waiting, who has it, and when will it get there. The board answers all three on one screen, and most changes take one drag.</p>
+        <h2>What the board shows</h2>
+        <p>Dispatchers mostly need to know three things: which orders are waiting, which driver has each one, and when it will arrive. The board shows all three, and most changes take a single drag.</p>
         <ul>
-          <li>An <strong>Unassigned</strong> column, then one lane per driver with their car, where they are, and their stops in order.</li>
+          <li>An <strong>Unassigned</strong> column, then one column per driver with their car, where they are, and their stops in order.</li>
           <li>Every card shows the order number, customer, town, total and payment, the delivery window, and an ETA.</li>
-          <li>Problems sit on the card itself: payment not confirmed, a manifest the state system rejected, an ETA that has drifted from what the customer was texted.</li>
+          <li>Problems show on the card itself, like a payment that hasn't gone through, a manifest the state system rejected, or an ETA that's now later than the one the customer was texted.</li>
         </ul>
       </div>
     </section>
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Drag and drop that feels physical</h2>
-        <p>The board uses the native HTML5 Drag and Drop API, but the browser's default drag image is a faint, half-transparent ghost. I replaced it: when a drag starts, the card is cloned into an overlay marked <code>inert</code> and <code>aria-hidden</code> that follows the pointer, while the original stays in place, faded, so you can see where it came from.</p>
+        <h2>Drag and drop</h2>
+        <p>The board uses the browser's HTML5 Drag and Drop API, but the default drag image is faint and hard to see. I replaced it: when a drag starts, the card is cloned into an overlay marked <code>inert</code> and <code>aria-hidden</code> that follows the pointer, while the original stays in place, faded, so you can see where it came from.</p>
         <figure class="dev-figure">
-          <img src="/development/img/md-board-drag.webp" alt="A dispatcher dragging order MD-2002 from the Unassigned column into a driver lane. The lifted copy of the card follows the pointer and the original stays faded in place." width="1440" height="600" loading="lazy" decoding="async">
+          <img src="/development/img/md-board-drag.webp" alt="A dispatcher dragging order MD-2002 from the Unassigned column into a driver’s column. The lifted copy of the card follows the pointer and the original stays faded in place." width="1440" height="600" loading="lazy" decoding="async">
           <figcaption>Moving an order to another driver in the live app. Test data.</figcaption>
         </figure>
         <p>Positioning runs through <code>requestAnimationFrame</code>, so a burst of <code>dragover</code> events still moves the card once per frame:</p>
@@ -98,7 +98,7 @@ const onDragOver = (dragEvent: DragEvent) =&gt; {
 };</code></pre>
         <ul>
           <li>After a drop, the copy waits where it was dropped until the server confirms the move and the board re-renders, then glides into its new slot in 200 ms. A move that fails, or a drag that's cancelled, glides back. If the server hasn't answered in five seconds, it settles anyway.</li>
-          <li>Holding a card near the edge of the board scrolls it, one bounded step per <code>dragover</code>, so it never runs away from you.</li>
+          <li>Holding a card near the edge of the board scrolls it, one small step per <code>dragover</code>, so it doesn't scroll too fast.</li>
           <li>Firefox only starts a drag that carries data, so every drag sets its own <code>application/x-dispatch-order</code> payload.</li>
           <li>With <code>prefers-reduced-motion</code>, cards jump to their place instead of gliding.</li>
         </ul>
@@ -107,12 +107,12 @@ const onDragOver = (dragEvent: DragEvent) =&gt; {
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Secondary actions stay out of the way</h2>
-        <p>Cards would be unreadable if every action had a button. Assigning and moving orders without dragging lives in a <span aria-hidden="true">⋯</span> menu on each card and lane, which also makes the board usable on a touch screen. Everything else about an order, including texting the customer an updated ETA, opens in a panel over the board, so a dispatcher never loses their place.</p>
+        <h2>Menus and the order panel</h2>
+        <p>If every action had its own button, the cards would be too cluttered to read. You can also assign and move orders from a <span aria-hidden="true">⋯</span> menu on each card and column, which makes the board usable on a touch screen. Everything else about an order, including texting the customer an updated ETA, opens in a panel over the board, so a dispatcher never loses their place.</p>
         <div class="dev-pair">
         <figure class="dev-figure">
-          <img src="/development/img/md-board-menus.webp" alt="Dispatch board with an open actions menu on a card in a driver lane." width="1440" height="630" loading="lazy" decoding="async">
-          <figcaption>Card and lane menus.</figcaption>
+          <img src="/development/img/md-board-menus.webp" alt="Dispatch board with an open actions menu on a card in a driver’s column." width="1440" height="630" loading="lazy" decoding="async">
+          <figcaption>Card and column menus.</figcaption>
         </figure>
         <figure class="dev-figure">
           <img src="/development/img/md-order-detail.webp" alt="Order detail panel open over the dispatch board, showing customer, delivery window, items and payment." width="1440" height="828" loading="lazy" decoding="async">
@@ -124,8 +124,8 @@ const onDragOver = (dragEvent: DragEvent) =&gt; {
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Live on every screen</h2>
-        <p>Each open board subscribes to a Server-Sent Events stream of order updates and reconciles them with what's on screen, so two dispatchers can work the same night without overwriting each other; an end-to-end test drives two sessions at once to check it. The same data drives a wallboard sized for the TV in a dispatch room and a phone layout for managers away from the desk.</p>
+        <h2>Live updates</h2>
+        <p>Each open board subscribes to a Server-Sent Events stream of order updates and reconciles them with what's on screen, so two dispatchers can work at the same time without overwriting each other's changes; an end-to-end test drives two sessions at once to check it. The same data drives a wallboard sized for the TV in a dispatch room and a phone layout for managers away from the desk.</p>
         <div class="dev-pair phone">
         <figure class="dev-figure">
           <img src="/development/img/md-wallboard.webp" alt="Operations wallboard showing counts for active, unassigned, on hold, past ETA, payment pending, manifest issues, drivers available and ETA due soon." width="1600" height="557" loading="lazy" decoding="async">

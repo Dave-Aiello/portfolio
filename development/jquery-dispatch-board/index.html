@@ -26,7 +26,7 @@
   <main>
     <section class="case-head wrap">
       <h1>Dispatch board in jQuery</h1>
-      <p class="lede">The Magic Dragon board rebuilt with jQuery and no build step: HTML5 drag and drop, keyboard control for people who can’t use a mouse, and ETAs that recalculate as stops move.</p>
+      <p class="lede">I rebuilt the Magic Dragon board with jQuery and no build step. It has HTML5 drag and drop, keyboard control for people who can’t use a mouse, and ETAs that update as stops move.</p>
       <div class="actions">
         <a class="button" href="/development/demos/dispatch-board/">Open the board</a>
         <a class="button secondary" href="/development/demos/dispatch-board/test.html">Run the tests</a>
@@ -43,7 +43,7 @@
       <div class="wrap">
         <figure class="dev-figure">
           <iframe class="demo-frame" src="/development/demos/dispatch-board/" title="Dispatch board demo" loading="lazy"></iframe>
-          <figcaption>Try it: Ray P. is late for his 7–8 PM window in Devin’s lane. Drag him to Ana, or focus a card and press Space, then the arrow keys.</figcaption>
+          <figcaption>Try it: Ray P. is late for his 7–8 PM window in Devin’s column. Drag him to Ana, or focus a card and press Space, then the arrow keys.</figcaption>
         </figure>
       </div>
     </section>
@@ -80,14 +80,14 @@ function placeMarker($list, y) {
     $list.append($marker);
   }
 }</code></pre>
-        <p>Holding a card near the edge of the board or the window scrolls it, which matters on a laptop with four lanes and a long night.</p>
+        <p>Holding a card near the edge of the board or the window scrolls it, which helps on a laptop screen with four drivers.</p>
       </div>
     </section>
 
     <section class="section">
       <div class="wrap prose">
         <h2>Keyboard: pick up, move, drop</h2>
-        <p>Drag and drop is useless to someone on a keyboard or a screen reader, so every card is a focusable control. <kbd>Space</kbd> picks it up, the arrow keys move it between lanes and stops, <kbd>Space</kbd> drops it and <kbd>Escape</kbd> puts it back. Each step is announced through an <code>aria-live</code> region: “Ana R., stop 2 of 3, ETA 8:06 PM.”</p>
+        <p>Drag and drop is useless to someone on a keyboard or a screen reader, so every card is a focusable control. <kbd>Space</kbd> picks it up, the arrow keys move it between drivers and stops, <kbd>Space</kbd> drops it and <kbd>Escape</kbd> puts it back. Each step is announced through an <code>aria-live</code> region: “Ana R., stop 2 of 3, ETA 8:06 PM.”</p>
         <pre tabindex="0"><code>switch (e.key) {
   case 'ArrowUp': e.preventDefault(); nudge(0, -1); break;
   case 'ArrowDown': e.preventDefault(); nudge(0, 1); break;
@@ -104,13 +104,13 @@ function placeMarker($list, y) {
     <section class="section">
       <div class="wrap prose">
         <h2>Touch: a menu on every card</h2>
-        <p>HTML5 drag and drop is unreliable on phones, so each card also has a <span aria-hidden="true">⋯</span> menu with Assign, Unassign and Mark ready. It follows the ARIA menu button pattern: arrow keys, <kbd>Home</kbd> and <kbd>End</kbd> move through items, and <kbd>Escape</kbd> closes it and returns focus to the button. On small screens the lanes snap one per swipe.</p>
+        <p>HTML5 drag and drop is unreliable on phones, so each card also has a <span aria-hidden="true">⋯</span> menu with Assign, Unassign and Mark ready. It follows the ARIA menu button pattern: arrow keys, <kbd>Home</kbd> and <kbd>End</kbd> move through items, and <kbd>Escape</kbd> closes it and returns focus to the button. On small screens you swipe from one driver to the next.</p>
       </div>
     </section>
 
     <section class="section">
       <div class="wrap prose">
-        <h2>ETA math, tested on its own</h2>
+        <h2>ETA math and tests</h2>
         <p>The route timing lives in <code>eta.js</code>, which has no DOM code, so the page and a QUnit suite run the same functions. A driver who is still out leaves when they get back; a stop with a delivery window is never reached early; a stop reached after its window closes is flagged late.</p>
         <pre tabindex="0"><code>for (var i = 0; i &lt; stops.length; i++) {
   var stop = stops[i];

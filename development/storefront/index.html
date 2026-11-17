@@ -26,7 +26,7 @@
   <main>
     <section class="case-head wrap">
       <h1>Magic Dragon storefront</h1>
-      <p class="lede">The web menu customers order from: browse, see when an order would arrive, sign in with a text code, and check out. Most orders come from phones, so every screen is built for one hand first.</p>
+      <p class="lede">The website customers order from. They can browse, see when an order would arrive, sign in with a text code and check out. Most orders come from phones, so I designed every screen for a phone first.</p>
       <div class="actions">
         <a class="button" href="/work/magic-dragon/">iPhone app design</a>
       </div>
@@ -49,11 +49,11 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Built for a phone</h2>
+        <h2>Designed for phones</h2>
         <ul>
-          <li>Categories scroll sideways in rails, so the whole menu is a few swipes deep instead of one long page.</li>
-          <li>Products open in a quick-view sheet; the bag stays one tap away in a sticky bar.</li>
-          <li>Tap targets, type sizes and contrast hold up on a phone outdoors.</li>
+          <li>Each category scrolls sideways in its own row, so the whole menu is a few swipes deep instead of one long page.</li>
+          <li>Products open in a pop-up, and the bag is always one tap away in a bar that stays on screen.</li>
+          <li>Buttons are easy to tap, and text is big enough and has enough contrast to read outside.</li>
         </ul>
         <div class="dev-phones">
         <figure class="dev-figure">
@@ -74,7 +74,7 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Deals that explain themselves</h2>
+        <h2>Deals</h2>
         <p>Discounts are only useful if people understand them. Products carry a deal tag, deal pages count what's already in the bag, and the bag says exactly what's left: "Add 1 more pre-roll to get 2 for $30." Prices show the sale style the store chose, with separate settings for guests and signed-in customers.</p>
         <figure class="dev-figure">
           <img src="/development/img/sf-product.webp" alt="Product page for Royal Velvet flower with price, a deal box, quantity stepper and Add to bag button." width="1280" height="1453" loading="lazy" decoding="async">
@@ -85,10 +85,10 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Rules handled in the interface</h2>
-        <p>This is a regulated product, and the rules show up as interface problems:</p>
+        <h2>State rules</h2>
+        <p>Cannabis is regulated, and several of the rules affect the design:</p>
         <ul>
-          <li><strong>Age gate without hiding the menu from search.</strong> Every visitor confirms they're 21 or older, but the page underneath is real, rendered HTML, blurred and marked <code>inert</code> and <code>aria-hidden</code> until they confirm. Search engines can index the menu, and the sitemap grew from 8 links to 104.</li>
+          <li><strong>An age check that doesn't hide the menu from search engines.</strong> Every visitor confirms they're 21 or older, but the page underneath is real, rendered HTML, blurred and marked <code>inert</code> and <code>aria-hidden</code> until they confirm. Search engines can index the menu, and the sitemap grew from 8 links to 104.</li>
           <li><strong>Purchase limits.</strong> State law caps how much a customer can buy, so the bag checks the limit before checkout instead of failing at the end.</li>
           <li><strong>Structured data.</strong> Store pages carry JSON-LD so search engines get the business details right.</li>
         </ul>
@@ -107,7 +107,7 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Dialogs that behave</h2>
+        <h2>Dialogs and keyboard focus</h2>
         <p>The quick view, the bag and the address prompt can stack on top of each other. A shared focus manager keeps keyboard focus inside the topmost one, skips anything hidden or inert, and returns focus to the right place when a layer closes:</p>
         <pre tabindex="0"><code>function getStorefrontModalFocusableElements(dialog: HTMLElement) {
   return Array.from(dialog.querySelectorAll&lt;HTMLElement&gt;(STOREFRONT_MODAL_FOCUSABLE_SELECTOR)).filter((element) =&gt; (

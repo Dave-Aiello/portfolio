@@ -54,8 +54,8 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>A board that runs itself</h2>
-        <p>The hero is the real board layout, drawn at a fixed design size and scaled to fit the screen. On phones it doesn't shrink to nothing; it crops to the left lanes at a readable size. A short script plays a loop of the things dispatchers actually do: a new order lands, it's dragged to a driver, it turns ready, and a delivery completes.</p>
+        <h2>The animated board</h2>
+        <p>The hero is the real board layout, drawn at a fixed design size and scaled to fit the screen. On phones it doesn't shrink to an unreadable size. It crops to the first few columns instead. A short script plays a loop of the things dispatchers actually do: a new order lands, it's dragged to a driver, it turns ready, and a delivery completes.</p>
         <p>Cards move with the FLIP technique: measure where the card is, move it in the DOM, measure again, then animate the transform from the old position to zero. The browser does one layout and the animation runs on the compositor.</p>
         <pre tabindex="0"><code>function flipTo(card, list) {
   var first = card.getBoundingClientRect();
@@ -76,7 +76,7 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>A fleet map on a canvas</h2>
+        <h2>The fleet map</h2>
         <figure class="dev-figure">
           <div class="video">
             <video data-loop autoplay muted loop playsinline preload="metadata" width="1150" height="540" poster="/development/img/mds-fleet-map-poster.webp" aria-label="Fleet map animation">
@@ -103,7 +103,7 @@
 
     <section class="section">
       <div class="wrap prose">
-        <p class="next">Next: <a href="/development/token-labs/">Token Labs wallet</a></p>
+        <p class="next">Back to <a href="/development/">all development work</a></p>
       </div>
     </section>
   </main>

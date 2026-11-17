@@ -26,7 +26,7 @@
   <main>
     <section class="case-head wrap">
       <h1>Field Reports</h1>
-      <p class="lede">Inspectors work in basements and on roadsides where the signal drops. This app keeps working offline: it saves as you type, shrinks photos before storing them, records GPS and a signature, and prints a clean report.</p>
+      <p class="lede">Inspectors often work in basements and on roadsides with no signal. This app keeps working offline. It saves as you type, shrinks photos before storing them, records GPS and a signature, and prints a clean report.</p>
       <div class="actions">
         <a class="button" href="/development/demos/field-report/">Open the app</a>
       </div>
@@ -55,7 +55,7 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Works with no signal</h2>
+        <h2>Working offline</h2>
         <ul>
           <li>A service worker caches the app shell. Pages load from the network when it's there and from the cache when it isn't, so updates still arrive.</li>
           <li>Reports live in IndexedDB, photos included, as Blobs. Every change saves within half a second, and again when the tab is hidden, because phones close background tabs without warning.</li>
@@ -67,8 +67,8 @@
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Photos that fit on a phone</h2>
-        <p>A phone photo is several megabytes, which fills storage and crawls over a weak connection. Each photo is drawn onto a canvas at most 1600 pixels on its long edge and re-encoded as JPEG, one at a time so a batch of big images can't run a phone out of memory. The app shows the before and after size of every batch.</p>
+        <h2>Shrinking photos</h2>
+        <p>A phone photo is several megabytes, which fills up storage and is slow to send over a weak connection. Each photo is drawn onto a canvas at most 1600 pixels on its long edge and re-encoded as JPEG, one at a time so a batch of big images can't run a phone out of memory. The app shows the before and after size of every batch.</p>
         <pre tabindex="0"><code>var scale = Math.min(1, MAX_EDGE / Math.max(img.naturalWidth, img.naturalHeight));
 var canvas = document.createElement('canvas');
 canvas.width = Math.round(img.naturalWidth * scale);
@@ -83,7 +83,7 @@ canvas.toBlob(resolve, 'image/jpeg', QUALITY);</code></pre>
 
     <section class="section">
       <div class="wrap prose">
-        <h2>A signature pad for any pointer</h2>
+        <h2>Signature pad</h2>
         <p>Pointer Events give mouse, finger and stylus one code path. Strokes are stored as points, not pixels, so the signature redraws sharply after a phone rotates, and the canvas is scaled by <code>devicePixelRatio</code>. Anyone who can't draw a signature can type their name instead.</p>
         <pre tabindex="0"><code>canvas.addEventListener('pointermove', function (e) {
   if (!pad.current) return;
@@ -98,7 +98,7 @@ canvas.toBlob(resolve, 'image/jpeg', QUALITY);</code></pre>
 
     <section class="section">
       <div class="wrap prose">
-        <h2>Forms that explain themselves</h2>
+        <h2>Error messages</h2>
         <p>Finishing a report with missing fields moves focus to a summary of what to fix, in the style of the U.S. Web Design System and GOV.UK. Each item links to its field; each field gets <code>aria-invalid</code> and an error message tied to it with <code>aria-describedby</code>. Fixed problems drop off the list as you go. A hazard needs at least one photo, and a follow-up needs a priority.</p>
       </div>
     </section>
@@ -121,7 +121,7 @@ canvas.toBlob(resolve, 'image/jpeg', QUALITY);</code></pre>
         <div class="dev-pair phone">
         <figure class="dev-figure">
           <img src="/development/img/fr-offline.webp" alt="The reports list with an Offline, saving on this device notice in the header." width="920" height="300" loading="lazy" decoding="async">
-          <figcaption>Offline: still works, and says so.</figcaption>
+          <figcaption>The offline notice in the header.</figcaption>
         </figure>
         <figure class="dev-figure">
           <img src="/development/img/fr-phone.webp" alt="The report form on a phone." width="780" height="1688" loading="lazy" decoding="async">
