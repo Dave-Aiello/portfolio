@@ -1,0 +1,7 @@
+[
+  { "ref": "MD-10492", "customer": "Grace K.", "town": "Bethesda",    "miles": 6.9, "window": "8–9 PM", "total": 97.00, "payment": "Card at door", "status": "ready" },
+  { "ref": "MD-10493", "customer": "Luis R.",  "town": "Takoma Park", "miles": 2.0, "window": "ASAP",   "total": 52.75, "payment": "Cash at door", "status": "preparing" },
+  { "ref": "MD-10494", "customer": "Hana B.",  "town": "Hyattsville", "miles": 5.6, "window": "ASAP",   "total": 71.10, "payment": "Prepaid",      "status": "ready" },
+  { "ref": "MD-10495", "customer": "Tom W.",   "town": "Rockville",   "miles": 9.8, "window": "9–10 PM", "total": 63.40, "payment": "Prepaid",     "status": "attention", "note": "ID needs a second look" },
+  { "ref": "MD-10496", "customer": "Ivy C.",   "town": "Kensington",  "miles": 4.0, "window": "ASAP",   "total": 38.00, "payment": "Cash at door", "status": "ready" }
+]

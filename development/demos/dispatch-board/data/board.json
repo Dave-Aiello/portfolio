@@ -1,0 +1,38 @@
+{
+  "clock": 1160,
+  "hub": "Hub",
+  "matrix": {
+    "Hub":          { "Takoma Park": 8, "Wheaton": 10, "Kensington": 12, "Bethesda": 18, "Hyattsville": 16, "College Park": 17, "Rockville": 24 },
+    "Takoma Park":  { "Wheaton": 15, "Kensington": 16, "Bethesda": 24, "Hyattsville": 12, "College Park": 14, "Rockville": 28 },
+    "Wheaton":      { "Kensington": 7, "Bethesda": 18, "Hyattsville": 21, "College Park": 20, "Rockville": 16 },
+    "Kensington":   { "Bethesda": 12, "Hyattsville": 22, "College Park": 22, "Rockville": 15 },
+    "Bethesda":     { "Hyattsville": 27, "College Park": 28, "Rockville": 17 },
+    "Hyattsville":  { "College Park": 8, "Rockville": 33 },
+    "College Park": { "Rockville": 30 }
+  },
+  "lanes": [
+    { "id": "unassigned", "name": "Unassigned" },
+    { "id": "d1", "name": "Marcus T.", "vehicle": "Van 2", "initials": "MT", "color": "#2f6f5e", "availableAt": 1175 },
+    { "id": "d2", "name": "Ana R.", "vehicle": "Civic 4", "initials": "AR", "color": "#7a4b8c", "availableAt": 0 },
+    { "id": "d3", "name": "Devin K.", "vehicle": "Van 1", "initials": "DK", "color": "#a3572a", "availableAt": 1190 }
+  ],
+  "orders": [
+    { "ref": "MD-10491", "customer": "Alex N.",  "town": "Wheaton",      "miles": 3.1, "window": "ASAP",    "total": 64.20,  "payment": "Prepaid",      "status": "ready" },
+    { "ref": "MD-10488", "customer": "Priya S.", "town": "Rockville",    "miles": 9.8, "window": "ASAP",    "total": 54.00,  "payment": "Prepaid",      "status": "preparing" },
+    { "ref": "MD-10489", "customer": "Chris D.", "town": "College Park", "miles": 7.0, "window": "8–9 PM",  "total": 112.75, "payment": "Card at door", "status": "ready" },
+    { "ref": "MD-10490", "customer": "Sam W.",   "town": "Takoma Park",  "miles": 2.0, "window": "ASAP",    "total": 38.50,  "payment": "Cash at door", "status": "ready" },
+    { "ref": "MD-10482", "customer": "Jordan M.", "town": "Bethesda",    "miles": 6.9, "window": "ASAP",    "total": 86.40,  "payment": "Cash at door", "status": "ready" },
+    { "ref": "MD-10483", "customer": "Elena V.", "town": "Kensington",   "miles": 4.0, "window": "8–9 PM",  "total": 61.25,  "payment": "Prepaid",      "status": "ready" },
+    { "ref": "MD-10484", "customer": "Owen H.",  "town": "Hyattsville",  "miles": 5.6, "window": "ASAP",    "total": 47.80,  "payment": "Cash at door", "status": "ready" },
+    { "ref": "MD-10486", "customer": "Ben A.",   "town": "College Park", "miles": 7.0, "window": "8–9 PM",  "total": 58.00,  "payment": "Prepaid",      "status": "attention", "note": "Payment not confirmed" },
+    { "ref": "MD-10479", "customer": "Maya L.",  "town": "Wheaton",      "miles": 3.1, "window": "ASAP",    "total": 92.60,  "payment": "Cash at door", "status": "ready" },
+    { "ref": "MD-10480", "customer": "Ray P.",   "town": "Kensington",   "miles": 4.0, "window": "7–8 PM",  "total": 44.00,  "payment": "Prepaid",      "status": "ready" },
+    { "ref": "MD-10481", "customer": "Nina F.",  "town": "Rockville",    "miles": 9.8, "window": "ASAP",    "total": 105.30, "payment": "Card at door", "status": "ready" }
+  ],
+  "lists": {
+    "unassigned": ["MD-10491", "MD-10488", "MD-10489", "MD-10490"],
+    "d1": ["MD-10482", "MD-10483"],
+    "d2": ["MD-10484", "MD-10486"],
+    "d3": ["MD-10479", "MD-10480", "MD-10481"]
+  }
+}

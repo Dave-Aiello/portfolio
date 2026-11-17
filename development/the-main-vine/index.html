@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Main Vine, Dave Aiello</title>
+  <meta name="description" content="Case study: a giant pumpkin pedigree explorer that links 65,581 weigh-off entries into family trees, built with vanilla JavaScript, a Vercel Function and Postgres.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/development/dev.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="name" href="/">Dave Aiello</a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="/">Design</a>
+        <a href="/development/" aria-current="page">Development</a>
+        <a href="/about/">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-head wrap">
+      <h1>The Main Vine</h1>
+      <p class="lede">Giant pumpkin growers choose next year’s seeds by pedigree, but the weigh-off results only list each fruit’s parents as hand-typed names like “2365 Wolf 2021.” The Main Vine links every result since 2005 into family trees you can search and explore.</p>
+      <div class="actions">
+        <a class="button" href="https://the-main-vine.vercel.app/">Visit the site</a>
+        <a class="button secondary" href="https://the-main-vine.vercel.app/#/fruit/35586">Open a pedigree</a>
+      </div>
+      <dl class="facts-row">
+        <div><dt>Type</dt><dd>Personal project, 2026</dd></div>
+        <div><dt>My role</dt><dd>Everything: data, API, design and front end</dd></div>
+        <div><dt>Data</dt><dd>65,581 weigh-off entries, 8 classes, 2005 to 2026</dd></div>
+        <div><dt>Stack</dt><dd>Vanilla JavaScript, CSS, a Vercel Function, Neon Postgres</dd></div>
+      </dl>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <figure class="dev-figure">
+          <img src="/development/img/vine-home.webp" alt="The Main Vine home page: a headline about every GPC fruit and cross, the heaviest pumpkin ever at 3,156 lb, and a table of the biggest of all time." width="1600" height="1000" loading="lazy" decoding="async">
+          <figcaption>The home page leads with the heaviest pumpkin ever weighed and the all-time list.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>The problem</h2>
+        <p>The Great Pumpkin Commonwealth (GPC) publishes every weigh-off as a table: weight, grower, site, and the seed and pollinator written as text. To trace a winning pumpkin back through its family, a grower has to search for each parent by name, one year at a time.</p>
+        <ul>
+          <li><strong>Parents are typed by hand.</strong> “2020 Paton” might mean one fruit, two fruits, or a misspelling of “2020 Patton.”</li>
+          <li><strong>A pollinator name hides half the story.</strong> It says which seed the pollen plant grew from, not what that plant produced.</li>
+          <li><strong>It isn’t only pumpkins.</strong> Eight classes, from Atlantic Giant pumpkins to tomatoes, marrows and long gourds.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Turning typed names into links</h2>
+        <p>A scraper loads the published results into Postgres. Each seed and pollinator name is matched to a weighed fruit by weight, grower surname and year, allowing for small misspellings and missing years.</p>
+        <ul>
+          <li>A name that fits exactly one fruit becomes a link.</li>
+          <li>A name that fits several is shown as “needs review,” with every candidate, and drawn with a dashed line in the tree.</li>
+          <li>A name that isn’t found, because the fruit is older than 2005 or was never weighed at a GPC site, stays as plain text.</li>
+        </ul>
+        <p>For the pollinator, the site looks at the same grower’s other fruit that season. If exactly one grew from the pollinator seed, that is almost certainly the plant the pollen came from, and the tree shows what it grew. The site says plainly that these are strong hints, not certainties.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>A pedigree explorer built from scratch</h2>
+        <p>The tree is the heart of the site, and no charting library draws it. Each fruit is a real HTML card with links and buttons, positioned absolutely; the connecting lines are thin elements placed from the same coordinates.</p>
+        <figure class="dev-figure">
+          <img src="/development/img/vine-ped.webp" alt="Pedigree of 3156 Wallace 2026, three generations back, with seed and pollinator cards, what each pollinator plant grew, and a side panel for the selected fruit." width="1600" height="831" loading="lazy" decoding="async">
+          <figcaption>The pedigree of the heaviest pumpkin on record. Each card shows weight, over-the-top measurement and how it did against the weight chart.</figcaption>
+        </figure>
+        <p>The layout is one recursive pass. Parents are placed first, top to bottom, and each fruit is then centered on its first and last parent, so the tree never overlaps however unevenly it branches:</p>
+        <pre tabindex="0"><code>const place = (n, top) =&gt; {
+  n.h = heightOf(n);
+  n.x = colX(n.gen);
+  if (n.gen &gt; maxGen) maxGen = n.gen;
+  const gap = isCompact(n) ? CGAP : GAP;
+  let bottom;
+  if (!n.kids.length) { n.y = top; bottom = top + n.h + gap; }
+  else {
+    let t = top;
+    n.kids.forEach((k) =&gt; { t = place(k, t); });
+    const first = n.kids[0], last = n.kids[n.kids.length - 1];
+    const mid = ((first.y + anchorOf(first)) + (last.y + anchorOf(last))) / 2;
+    n.y = Math.max(top, mid - anchorOf(n));
+    bottom = Math.max(t, n.y + n.h + gap);
+  }
+  flat.push(n);
+  return bottom;
+};</code></pre>
+        <ul>
+          <li>Show 2 to 8 generations, or open and close any branch on its own.</li>
+          <li>Fold repeated ancestors: a famous seed that appears many times in a tree is drawn once and marked ×N.</li>
+          <li>From the fourth generation back, cards shrink to one line, so a deep tree stays readable.</li>
+          <li>Two ways to show what each pollinator plant grew. The choice is saved in <code>localStorage</code>.</li>
+          <li>Drag the empty part of the tree to move around it, like a map. Pointer Events with pointer capture keep the drag smooth, and buttons and links inside the tree still work.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Inbreeding, worked out in the browser</h2>
+        <p>Every fruit page shows its inbreeding coefficient, how many generations are on record, and how many distinct ancestors. The coefficient is the kinship of the fruit’s two parents, and kinship is defined recursively: the kinship of two fruits is the average kinship of the younger one’s parents with the older one. Memoizing each pair keeps a 13-generation tree fast.</p>
+        <pre tabindex="0"><code>const kin = (a, b) =&gt; {
+  if (a == null || b == null) return 0;
+  if (!N[a] || !N[b]) return a === b ? 0.5 : 0;
+  const key = a &lt; b ? a + '|' + b : b + '|' + a;
+  if (memo[key] !== undefined) return memo[key];
+  let r;
+  if (a === b) { const pp = par(a); r = 0.5 * (1 + (pp ? kin(pp[0], pp[1]) : 0)); }
+  else {
+    let x = a, y = b;
+    if (N[b].y &gt; N[a].y) { x = b; y = a; }
+    const pp = par(x);
+    r = pp ? 0.5 * (kin(pp[0], y) + kin(pp[1], y)) : 0;
+  }
+  memo[key] = r;
+  return r;
+};</code></pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>A small API in front of Postgres</h2>
+        <ul>
+          <li>One Vercel Function, <code>/api/v1</code>, answers six questions: <code>meta</code>, <code>top</code>, <code>fruit</code>, <code>search</code>, <code>grower</code> and <code>results</code>. It queries Neon Postgres through its serverless driver.</li>
+          <li>Responses use the short field names the front end reads directly, which keeps payloads small for a 65,000-row dataset.</li>
+          <li>The front end caches each request by its query string and drops failed ones, so going back is instant and a retry actually retries.</li>
+          <li>Hash routes give every fruit, grower, year and search its own address, so a grower can share a link to a pedigree and the Back button works.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>On a phone</h2>
+        <p>Wide tables and the tree scroll inside their own panels, so the page itself never scrolls sideways at phone width.</p>
+        <div class="phone-pair">
+        <figure class="dev-figure">
+          <img src="/development/img/vine-phone-home.webp" alt="The Main Vine home page on a phone, with the headline, search and the heaviest pumpkin card." width="780" height="1688" loading="lazy" decoding="async">
+          <figcaption>Home</figcaption>
+        </figure>
+        <figure class="dev-figure">
+          <img src="/development/img/vine-phone-fruit.webp" alt="A fruit page on a phone with weight, OTT, chart comparison, inbreeding and ancestors on record." width="780" height="1688" loading="lazy" decoding="async">
+          <figcaption>A fruit page</figcaption>
+        </figure>
+        </div>
+        <p class="small">Data: GPC weigh-off results published on BigPumpkins.com.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <p class="next">Next: <a href="/development/jquery-dispatch-board/">Dispatch board in jQuery</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>Dave Aiello</span>
+      <span><a href="/about/#contact">Contact</a></span>
+    </div>
+  </footer>
+</body>
+</html>

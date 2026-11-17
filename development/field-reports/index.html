@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Field Reports, Dave Aiello</title>
+  <meta name="description" content="An offline-first inspection report app built with Bootstrap 5, jQuery, IndexedDB, a service worker, Geolocation and Canvas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/development/dev.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="name" href="/">Dave Aiello</a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="/">Design</a>
+        <a href="/development/" aria-current="page">Development</a>
+        <a href="/about/">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-head wrap">
+      <h1>Field Reports</h1>
+      <p class="lede">Inspectors work in basements and on roadsides where the signal drops. This app keeps working offline: it saves as you type, shrinks photos before storing them, records GPS and a signature, and prints a clean report.</p>
+      <div class="actions">
+        <a class="button" href="/development/demos/field-report/">Open the app</a>
+      </div>
+      <dl class="facts-row">
+        <div><dt>Type</dt><dd>Working demo, 2026</dd></div>
+        <div><dt>Built with</dt><dd>Bootstrap 5.3, jQuery 3.7</dd></div>
+        <div><dt>Browser APIs</dt><dd>IndexedDB, Service Worker, Geolocation, Canvas, Pointer Events, History</dd></div>
+        <div><dt>Works</dt><dd>Offline, and installs to a home screen</dd></div>
+      </dl>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="dev-pair">
+        <figure class="dev-figure">
+          <img src="/development/img/fr-errors.webp" alt="The report form with an error summary at the top listing five fields to fix, each a link." width="920" height="1100" loading="lazy" decoding="async">
+          <figcaption>Errors listed at the top, each one a link to its field.</figcaption>
+        </figure>
+        <figure class="dev-figure">
+          <img src="/development/img/fr-summary.webp" alt="A finished inspection report with type, date, inspector, location, condition, follow-up, notes, two photos and a signature." width="920" height="880" loading="lazy" decoding="async">
+          <figcaption>The finished report, ready to print or export.</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Works with no signal</h2>
+        <ul>
+          <li>A service worker caches the app shell. Pages load from the network when it's there and from the cache when it isn't, so updates still arrive.</li>
+          <li>Reports live in IndexedDB, photos included, as Blobs. Every change saves within half a second, and again when the tab is hidden, because phones close background tabs without warning.</li>
+          <li>The header says when you're offline; nothing else changes.</li>
+          <li>It installs to a home screen from the web app manifest.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Photos that fit on a phone</h2>
+        <p>A phone photo is several megabytes, which fills storage and crawls over a weak connection. Each photo is drawn onto a canvas at most 1600 pixels on its long edge and re-encoded as JPEG, one at a time so a batch of big images can't run a phone out of memory. The app shows the before and after size of every batch.</p>
+        <pre tabindex="0"><code>var scale = Math.min(1, MAX_EDGE / Math.max(img.naturalWidth, img.naturalHeight));
+var canvas = document.createElement('canvas');
+canvas.width = Math.round(img.naturalWidth * scale);
+canvas.height = Math.round(img.naturalHeight * scale);
+var ctx = canvas.getContext('2d');
+ctx.fillStyle = '#ffffff'; // transparent PNGs become white, not black
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+canvas.toBlob(resolve, 'image/jpeg', QUALITY);</code></pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>A signature pad for any pointer</h2>
+        <p>Pointer Events give mouse, finger and stylus one code path. Strokes are stored as points, not pixels, so the signature redraws sharply after a phone rotates, and the canvas is scaled by <code>devicePixelRatio</code>. Anyone who can't draw a signature can type their name instead.</p>
+        <pre tabindex="0"><code>canvas.addEventListener('pointermove', function (e) {
+  if (!pad.current) return;
+  e.preventDefault();
+<span class="c">  // Coalesced events give every point the hardware reported, for smoother lines.</span>
+  var events = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  for (var i = 0; i &lt; events.length; i++) pad.current.push(point(events[i]));
+  pad.redraw();
+});</code></pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Forms that explain themselves</h2>
+        <p>Finishing a report with missing fields moves focus to a summary of what to fix, in the style of the U.S. Web Design System and GOV.UK. Each item links to its field; each field gets <code>aria-invalid</code> and an error message tied to it with <code>aria-describedby</code>. Fixed problems drop off the list as you go. A hazard needs at least one photo, and a follow-up needs a priority.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Getting the report out</h2>
+        <ul>
+          <li>A print stylesheet turns the report into a clean page, so "Save as PDF" works in any browser.</li>
+          <li>Download JSON exports the whole report with photos inline, read through <code>FileReader</code> and saved with a Blob URL.</li>
+          <li>On phones that support the Web Share API, Share sends the report to another app.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Navigation</h2>
+        <p>Each report has its own URL through the History API (<code>?report=…</code>), so Back, refresh and bookmarks work. After each navigation, focus moves to the new page heading so screen readers announce it.</p>
+        <div class="dev-pair phone">
+        <figure class="dev-figure">
+          <img src="/development/img/fr-offline.webp" alt="The reports list with an Offline, saving on this device notice in the header." width="920" height="300" loading="lazy" decoding="async">
+          <figcaption>Offline: still works, and says so.</figcaption>
+        </figure>
+        <figure class="dev-figure">
+          <img src="/development/img/fr-phone.webp" alt="The report form on a phone." width="780" height="1688" loading="lazy" decoding="async">
+          <figcaption>On a phone.</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <p class="next">Next: <a href="/development/magicdragonsoftware/">magicdragonsoftware.com</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>Dave Aiello</span>
+      <span><a href="/about/#contact">Contact</a></span>
+    </div>
+  </footer>
+</body>
+</html>

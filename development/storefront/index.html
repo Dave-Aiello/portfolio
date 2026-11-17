@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Magic Dragon storefront, Dave Aiello</title>
+  <meta name="description" content="Case study: a responsive online menu and checkout with deals, delivery times, phone sign-in and WCAG 2.2 AA testing.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/development/dev.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="name" href="/">Dave Aiello</a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="/">Design</a>
+        <a href="/development/" aria-current="page">Development</a>
+        <a href="/about/">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-head wrap">
+      <h1>Magic Dragon storefront</h1>
+      <p class="lede">The web menu customers order from: browse, see when an order would arrive, sign in with a text code, and check out. Most orders come from phones, so every screen is built for one hand first.</p>
+      <div class="actions">
+        <a class="button" href="/work/magic-dragon/">iPhone app design</a>
+      </div>
+      <dl class="facts-row">
+        <div><dt>Type</dt><dd>Real product, 2026</dd></div>
+        <div><dt>My role</dt><dd>Founder; design and front end</dd></div>
+        <div><dt>Stack</dt><dd>Next.js, React 19, TypeScript, CSS Modules, JSON-LD</dd></div>
+        <div><dt>Testing</dt><dd>Playwright, axe-core, Vitest</dd></div>
+      </dl>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <figure class="dev-figure">
+          <img src="/development/img/sf-deal-strip.webp" alt="Storefront menu on a wide screen with the address bar, category tabs, a deal strip and a banner." width="1600" height="475" loading="lazy" decoding="async">
+          <figcaption>The menu on a wide screen. Test catalog.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Built for a phone</h2>
+        <ul>
+          <li>Categories scroll sideways in rails, so the whole menu is a few swipes deep instead of one long page.</li>
+          <li>Products open in a quick-view sheet; the bag stays one tap away in a sticky bar.</li>
+          <li>Tap targets, type sizes and contrast hold up on a phone outdoors.</li>
+        </ul>
+        <div class="dev-phones">
+        <figure class="dev-figure">
+          <img src="/development/img/sf-deals-phone.webp" alt="Deals page on a phone, showing a 2 for $30 pre-roll deal and a note that one more item completes it." width="780" height="1046" loading="lazy" decoding="async">
+          <figcaption>A deal page that counts what is in the bag.</figcaption>
+        </figure>
+        <figure class="dev-figure">
+          <img src="/development/img/sf-bag-phone.webp" alt="The bag on a phone with two items, a purchase limit row and a message saying one more pre-roll completes a deal." width="780" height="1266" loading="lazy" decoding="async">
+          <figcaption>The bag explains what each deal still needs.</figcaption>
+        </figure>
+        <figure class="dev-figure">
+          <img src="/development/img/sf-login-phone.webp" alt="Log in or sign up dialog on a phone with a phone number field and a Send code button." width="390" height="844" loading="lazy" decoding="async">
+          <figcaption>Sign in with a one-time text code.</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Deals that explain themselves</h2>
+        <p>Discounts are only useful if people understand them. Products carry a deal tag, deal pages count what's already in the bag, and the bag says exactly what's left: "Add 1 more pre-roll to get 2 for $30." Prices show the sale style the store chose, with separate settings for guests and signed-in customers.</p>
+        <figure class="dev-figure">
+          <img src="/development/img/sf-product.webp" alt="Product page for Royal Velvet flower with price, a deal box, quantity stepper and Add to bag button." width="1280" height="1453" loading="lazy" decoding="async">
+          <figcaption>A product page with its deal.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Rules handled in the interface</h2>
+        <p>This is a regulated product, and the rules show up as interface problems:</p>
+        <ul>
+          <li><strong>Age gate without hiding the menu from search.</strong> Every visitor confirms they're 21 or older, but the page underneath is real, rendered HTML, blurred and marked <code>inert</code> and <code>aria-hidden</code> until they confirm. Search engines can index the menu, and the sitemap grew from 8 links to 104.</li>
+          <li><strong>Purchase limits.</strong> State law caps how much a customer can buy, so the bag checks the limit before checkout instead of failing at the end.</li>
+          <li><strong>Structured data.</strong> Store pages carry JSON-LD so search engines get the business details right.</li>
+        </ul>
+        <div class="dev-pair">
+        <figure class="dev-figure">
+          <img src="/development/img/sf-age-gate.webp" alt="Age confirmation dialog over a blurred menu page." width="1280" height="760" loading="lazy" decoding="async">
+          <figcaption>The 21+ gate over the real, indexable page.</figcaption>
+        </figure>
+        <figure class="dev-figure">
+          <img src="/development/img/sf-quickview.webp" alt="Product quick view dialog over the menu, with photo, price, quantity and product details." width="1440" height="900" loading="lazy" decoding="async">
+          <figcaption>Quick view keeps focus inside the dialog.</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Dialogs that behave</h2>
+        <p>The quick view, the bag and the address prompt can stack on top of each other. A shared focus manager keeps keyboard focus inside the topmost one, skips anything hidden or inert, and returns focus to the right place when a layer closes:</p>
+        <pre tabindex="0"><code>function getStorefrontModalFocusableElements(dialog: HTMLElement) {
+  return Array.from(dialog.querySelectorAll&lt;HTMLElement&gt;(STOREFRONT_MODAL_FOCUSABLE_SELECTOR)).filter((element) =&gt; (
+    element.tabIndex &gt;= 0
+    &amp;&amp; !element.hasAttribute("disabled")
+    &amp;&amp; element.getAttribute("aria-hidden") !== "true"
+    &amp;&amp; !element.closest("[hidden], [inert]")
+    &amp;&amp; element.getClientRects().length &gt; 0
+  ));
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Testing</h2>
+        <p>Playwright runs the shared components through axe-core against WCAG 2.2 AA, checks keyboard paths and form validation, and keeps a visual catalog of the design system. Flows with real money in them, like cart recovery and checkout, have their own end-to-end specs.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <p class="next">Next: <a href="/development/the-main-vine/">The Main Vine</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>Dave Aiello</span>
+      <span><a href="/about/#contact">Contact</a></span>
+    </div>
+  </footer>
+</body>
+</html>

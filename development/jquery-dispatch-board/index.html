@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dispatch board in jQuery, Dave Aiello</title>
+  <meta name="description" content="A dispatch board built with jQuery and the HTML5 Drag and Drop API, with full keyboard support, undo and tested ETA math.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/development/dev.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="name" href="/">Dave Aiello</a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="/">Design</a>
+        <a href="/development/" aria-current="page">Development</a>
+        <a href="/about/">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-head wrap">
+      <h1>Dispatch board in jQuery</h1>
+      <p class="lede">The Magic Dragon board rebuilt with jQuery and no build step: HTML5 drag and drop, keyboard control for people who can’t use a mouse, and ETAs that recalculate as stops move.</p>
+      <div class="actions">
+        <a class="button" href="/development/demos/dispatch-board/">Open the board</a>
+        <a class="button secondary" href="/development/demos/dispatch-board/test.html">Run the tests</a>
+      </div>
+      <dl class="facts-row">
+        <div><dt>Type</dt><dd>Working demo, 2026</dd></div>
+        <div><dt>Built with</dt><dd>jQuery 3.7, HTML5 Drag and Drop, Ajax</dd></div>
+        <div><dt>Saves to</dt><dd>localStorage, with undo</dd></div>
+        <div><dt>Tests</dt><dd>11 QUnit tests for the ETA math</dd></div>
+      </dl>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <figure class="dev-figure">
+          <iframe class="demo-frame" src="/development/demos/dispatch-board/" title="Dispatch board demo" loading="lazy"></iframe>
+          <figcaption>Try it: Ray P. is late for his 7–8 PM window in Devin’s lane. Drag him to Ana, or focus a card and press Space, then the arrow keys.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>How it's put together</h2>
+        <p>One state object holds the lanes and orders. Every change, whether a drag, a key press, a menu pick or a new order, goes through one <code>commit()</code> function that snapshots the old state for Undo, saves to <code>localStorage</code>, and re-renders from state. Cards that changed position glide there using the FLIP technique: measure, re-render, then animate the transform from the old spot to the new one.</p>
+        <ul>
+          <li>The board and new orders load with <code>$.getJSON</code>, as they would from a server.</li>
+          <li>Order data only ever goes into the page through <code>.text()</code>, never as HTML.</li>
+          <li>Undo works from the toast, the toolbar or <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Z</kbd>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Mouse: HTML5 drag and drop</h2>
+        <p>Drag events are delegated on the board, so cards that are re-rendered never need new handlers. While you drag, a marker shows exactly where the card will land:</p>
+        <pre tabindex="0"><code><span class="c">// Where would the card land? Above the first card whose middle is below the pointer.</span>
+function placeMarker($list, y) {
+  var before = null;
+  $list.children('.card').not('.is-dragging').each(function () {
+    var r = this.getBoundingClientRect();
+    if (y &lt; r.top + r.height / 2) {
+      before = this;
+      return false;
+    }
+  });
+  if (before) {
+    if ($marker[0].nextSibling !== before) $marker.insertBefore(before);
+  } else if ($marker[0].parentNode !== $list[0] || $marker[0].nextSibling) {
+    $list.append($marker);
+  }
+}</code></pre>
+        <p>Holding a card near the edge of the board or the window scrolls it, which matters on a laptop with four lanes and a long night.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Keyboard: pick up, move, drop</h2>
+        <p>Drag and drop is useless to someone on a keyboard or a screen reader, so every card is a focusable control. <kbd>Space</kbd> picks it up, the arrow keys move it between lanes and stops, <kbd>Space</kbd> drops it and <kbd>Escape</kbd> puts it back. Each step is announced through an <code>aria-live</code> region: “Ana R., stop 2 of 3, ETA 8:06 PM.”</p>
+        <pre tabindex="0"><code>switch (e.key) {
+  case 'ArrowUp': e.preventDefault(); nudge(0, -1); break;
+  case 'ArrowDown': e.preventDefault(); nudge(0, 1); break;
+  case 'ArrowLeft': e.preventDefault(); nudge(-1, 0); break;
+  case 'ArrowRight': e.preventDefault(); nudge(1, 0); break;
+  case ' ':
+  case 'Enter': e.preventDefault(); drop(); break;
+  case 'Escape': e.preventDefault(); cancelLift(); break;
+  case 'Tab': cancelLift(); break;
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Touch: a menu on every card</h2>
+        <p>HTML5 drag and drop is unreliable on phones, so each card also has a <span aria-hidden="true">⋯</span> menu with Assign, Unassign and Mark ready. It follows the ARIA menu button pattern: arrow keys, <kbd>Home</kbd> and <kbd>End</kbd> move through items, and <kbd>Escape</kbd> closes it and returns focus to the button. On small screens the lanes snap one per swipe.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>ETA math, tested on its own</h2>
+        <p>The route timing lives in <code>eta.js</code>, which has no DOM code, so the page and a QUnit suite run the same functions. A driver who is still out leaves when they get back; a stop with a delivery window is never reached early; a stop reached after its window closes is flagged late.</p>
+        <pre tabindex="0"><code>for (var i = 0; i &lt; stops.length; i++) {
+  var stop = stops[i];
+  var arrive = t + travel(opts.matrix, here, stop.town);
+  var win = parseWindow(stop.window);
+<span class="c">  // Never early: wait for the delivery window to open.</span>
+  var eta = win &amp;&amp; arrive &lt; win.start ? win.start : arrive;
+  planned.push({ ref: stop.ref, eta: eta, waited: eta - arrive, late: !!win &amp;&amp; eta &gt; win.end });
+  t = eta + SERVICE_MIN;
+  here = stop.town;
+}</code></pre>
+        <p><a href="/development/demos/dispatch-board/test.html">Run the 11 QUnit tests in your browser.</a></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Why jQuery</h2>
+        <p>Plenty of production sites still run on jQuery and Bootstrap, and drag and drop is where frameworks usually hide the hard parts. Writing it in ES5-style JavaScript with no build step shows the browser APIs underneath: <code>DataTransfer</code>, drag events, focus management and live regions.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <p class="next">Next: <a href="/development/field-reports/">Field Reports</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>Dave Aiello</span>
+      <span><a href="/about/#contact">Contact</a></span>
+    </div>
+  </footer>
+</body>
+</html>

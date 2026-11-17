@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>magicdragonsoftware.com, Dave Aiello</title>
+  <meta name="description" content="Case study: a product site with live, animated demos of a dispatch board and a fleet map, in plain HTML, CSS and JavaScript.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/development/dev.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="name" href="/">Dave Aiello</a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="/">Design</a>
+        <a href="/development/" aria-current="page">Development</a>
+        <a href="/about/">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-head wrap">
+      <h1>magicdragon<wbr>software<wbr>.com</h1>
+      <p class="lede">The product site for Magic Dragon Software. Instead of screenshots, it shows the dispatch board and the fleet map running, built with plain HTML, CSS and JavaScript.</p>
+      <div class="actions">
+        <a class="button" href="https://magicdragonsoftware.com">Visit the site</a>
+      </div>
+      <dl class="facts-row">
+        <div><dt>Type</dt><dd>Real product, 2026</dd></div>
+        <div><dt>My role</dt><dd>Founder; design and build</dd></div>
+        <div><dt>Stack</dt><dd>HTML, CSS, vanilla JavaScript, Canvas 2D</dd></div>
+        <div><dt>Build</dt><dd>No framework, no build step</dd></div>
+      </dl>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <figure class="dev-figure">
+          <div class="video">
+            <video data-loop autoplay muted loop playsinline preload="metadata" width="1138" height="590" poster="/development/img/md-dispatch-board-poster.webp" aria-label="Dispatch board animation">
+              <source src="/development/media/md-dispatch-board.webm" type="video/webm">
+              <source src="/development/media/md-dispatch-board.mp4" type="video/mp4">
+            </video>
+          </div>
+          <figcaption>The hero board runs a short loop of real board actions.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>A board that runs itself</h2>
+        <p>The hero is the real board layout, drawn at a fixed design size and scaled to fit the screen. On phones it doesn't shrink to nothing; it crops to the left lanes at a readable size. A short script plays a loop of the things dispatchers actually do: a new order lands, it's dragged to a driver, it turns ready, and a delivery completes.</p>
+        <p>Cards move with the FLIP technique: measure where the card is, move it in the DOM, measure again, then animate the transform from the old position to zero. The browser does one layout and the animation runs on the compositor.</p>
+        <pre tabindex="0"><code>function flipTo(card, list) {
+  var first = card.getBoundingClientRect();
+  list.appendChild(card);
+  var last = card.getBoundingClientRect();
+  var s = scale();
+  var dx = (first.left - last.left) / s;
+  var dy = (first.top - last.top) / s;
+  card.classList.add("is-flying");
+  card.style.transition = "none";
+  card.style.transform = "translate(" + dx + "px," + dy + "px)";
+  void card.offsetWidth;
+  card.style.transition = "transform 750ms cubic-bezier(0.2, 0.7, 0.2, 1)";
+  card.style.transform = "";
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>A fleet map on a canvas</h2>
+        <figure class="dev-figure">
+          <div class="video">
+            <video data-loop autoplay muted loop playsinline preload="metadata" width="1150" height="540" poster="/development/img/mds-fleet-map-poster.webp" aria-label="Fleet map animation">
+              <source src="/development/media/mds-fleet-map.webm" type="video/webm">
+              <source src="/development/media/mds-fleet-map.mp4" type="video/mp4">
+            </video>
+          </div>
+          <figcaption>Drivers moving along their routes, with ETAs.</figcaption>
+        </figure>
+        <p>The map is drawn with the Canvas 2D API: roads, towns, routes and cars, with each car's position computed along its route for the current time. The backing store is scaled by <code>devicePixelRatio</code> so lines stay sharp, a <code>ResizeObserver</code> redraws it when its box changes, and an <code>IntersectionObserver</code> stops the animation loop while it's off screen.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Motion settings and performance</h2>
+        <ul>
+          <li>With <code>prefers-reduced-motion</code>, the loops never start and the map shows a still frame.</li>
+          <li>Both loops wait while the tab is hidden or the demo is scrolled away.</li>
+          <li>No framework and no build step: one stylesheet, one script, and two web fonts.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <p class="next">Next: <a href="/development/token-labs/">Token Labs wallet</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>Dave Aiello</span>
+      <span><a href="/about/#contact">Contact</a></span>
+    </div>
+  </footer>
+  <script src="/development/dev.js"></script>
+</body>
+</html>

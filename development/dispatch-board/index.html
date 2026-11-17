@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Magic Dragon dispatch board, Dave Aiello</title>
+  <meta name="description" content="Case study: a drag-and-drop dispatch board for delivery operators, built with React, TypeScript and the HTML5 Drag and Drop API.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/development/dev.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="name" href="/">Dave Aiello</a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="/">Design</a>
+        <a href="/development/" aria-current="page">Development</a>
+        <a href="/about/">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-head wrap">
+      <h1>Magic Dragon dispatch board</h1>
+      <p class="lede">Delivery operators run their night from this board. Each driver gets a lane. Dispatchers drag orders into lanes, reorder stops, and see a real ETA on every card.</p>
+      <div class="actions">
+        <a class="button" href="/development/jquery-dispatch-board/">Try the jQuery rebuild</a>
+        <a class="button secondary" href="https://magicdragonsoftware.com">Product site</a>
+      </div>
+      <dl class="facts-row">
+        <div><dt>Type</dt><dd>Real product, 2026</dd></div>
+        <div><dt>My role</dt><dd>Founder; design and front end</dd></div>
+        <div><dt>Platform</dt><dd>Web: desktop, a TV wallboard and phones</dd></div>
+        <div><dt>Stack</dt><dd>React 19, Next.js, TypeScript, CSS Modules, HTML5 Drag and Drop, Server-Sent Events</dd></div>
+      </dl>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <figure class="dev-figure">
+          <div class="video">
+            <video data-loop autoplay muted loop playsinline preload="metadata" width="1138" height="590" poster="/development/img/md-dispatch-board-poster.webp" aria-label="Dispatch board animation">
+              <source src="/development/media/md-dispatch-board.webm" type="video/webm">
+              <source src="/development/media/md-dispatch-board.mp4" type="video/mp4">
+            </video>
+          </div>
+          <figcaption>The board loop from magicdragonsoftware.com: a new order arrives, gets dragged to a driver, turns ready, and a delivery completes. Sample data.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>The job of the board</h2>
+        <p>A delivery night comes down to three questions: what's waiting, who has it, and when will it get there. The board answers all three on one screen, and most changes take one drag.</p>
+        <ul>
+          <li>An <strong>Unassigned</strong> column, then one lane per driver with their car, where they are, and their stops in order.</li>
+          <li>Every card shows the order number, customer, town, total and payment, the delivery window, and an ETA.</li>
+          <li>Problems sit on the card itself: payment not confirmed, a manifest the state system rejected, an ETA that has drifted from what the customer was texted.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Drag and drop that feels physical</h2>
+        <p>The board uses the native HTML5 Drag and Drop API, but the browser's default drag image is a faint, half-transparent ghost. I replaced it: when a drag starts, the card is cloned into an overlay marked <code>inert</code> and <code>aria-hidden</code> that follows the pointer, while the original stays in place, faded, so you can see where it came from.</p>
+        <figure class="dev-figure">
+          <img src="/development/img/md-board-drag.webp" alt="A dispatcher dragging order MD-2002 from the Unassigned column into a driver lane. The lifted copy of the card follows the pointer and the original stays faded in place." width="1440" height="600" loading="lazy" decoding="async">
+          <figcaption>Moving an order to another driver in the live app. Test data.</figcaption>
+        </figure>
+        <p>Positioning runs through <code>requestAnimationFrame</code>, so a burst of <code>dragover</code> events still moves the card once per frame:</p>
+        <pre tabindex="0"><code><span class="c">/** The browser's own drag image is a faint copy of the small handle; ours is the whole card. */</span>
+function hideNativeDragImage(dataTransfer: DataTransfer | null) {
+  if (!dataTransfer || typeof dataTransfer.setDragImage !== "function") return;
+  const blank = document.createElement("div");
+  blank.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;pointer-events:none;";
+  document.body.appendChild(blank);
+  dataTransfer.setDragImage(blank, 0, 0);
+  setTimeout(() =&gt; blank.remove(), 0);
+}
+
+const onDragOver = (dragEvent: DragEvent) =&gt; {
+  const active = activeRef.current;
+  if (!active || active.phase !== "dragging") return;
+<span class="c">  // Some browsers end a drag with a 0,0 dragover.</span>
+  if (dragEvent.clientX === 0 &amp;&amp; dragEvent.clientY === 0) return;
+  active.pointer = { x: dragEvent.clientX, y: dragEvent.clientY };
+  if (active.frame !== null) return;
+  active.frame = requestAnimationFrame(() =&gt; {
+    active.frame = null;
+    place(active.overlay, active.pointer.x - active.offset.x, active.pointer.y - active.offset.y);
+  });
+};</code></pre>
+        <ul>
+          <li>After a drop, the copy waits where it was dropped until the server confirms the move and the board re-renders, then glides into its new slot in 200 ms. A move that fails, or a drag that's cancelled, glides back. If the server hasn't answered in five seconds, it settles anyway.</li>
+          <li>Holding a card near the edge of the board scrolls it, one bounded step per <code>dragover</code>, so it never runs away from you.</li>
+          <li>Firefox only starts a drag that carries data, so every drag sets its own <code>application/x-dispatch-order</code> payload.</li>
+          <li>With <code>prefers-reduced-motion</code>, cards jump to their place instead of gliding.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Secondary actions stay out of the way</h2>
+        <p>Cards would be unreadable if every action had a button. Assigning and moving orders without dragging lives in a <span aria-hidden="true">⋯</span> menu on each card and lane, which also makes the board usable on a touch screen. Everything else about an order, including texting the customer an updated ETA, opens in a panel over the board, so a dispatcher never loses their place.</p>
+        <div class="dev-pair">
+        <figure class="dev-figure">
+          <img src="/development/img/md-board-menus.webp" alt="Dispatch board with an open actions menu on a card in a driver lane." width="1440" height="630" loading="lazy" decoding="async">
+          <figcaption>Card and lane menus.</figcaption>
+        </figure>
+        <figure class="dev-figure">
+          <img src="/development/img/md-order-detail.webp" alt="Order detail panel open over the dispatch board, showing customer, delivery window, items and payment." width="1440" height="828" loading="lazy" decoding="async">
+          <figcaption>Order details over the board.</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Live on every screen</h2>
+        <p>Each open board subscribes to a Server-Sent Events stream of order updates and reconciles them with what's on screen, so two dispatchers can work the same night without overwriting each other; an end-to-end test drives two sessions at once to check it. The same data drives a wallboard sized for the TV in a dispatch room and a phone layout for managers away from the desk.</p>
+        <div class="dev-pair phone">
+        <figure class="dev-figure">
+          <img src="/development/img/md-wallboard.webp" alt="Operations wallboard showing counts for active, unassigned, on hold, past ETA, payment pending, manifest issues, drivers available and ETA due soon." width="1600" height="557" loading="lazy" decoding="async">
+          <figcaption>The wallboard view for a TV.</figcaption>
+        </figure>
+        <figure class="dev-figure">
+          <img src="/development/img/md-phone.webp" alt="The dispatch board on a phone, with the Unassigned column stacked above the drivers." width="390" height="1038" loading="lazy" decoding="async">
+          <figcaption>The phone layout.</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Testing</h2>
+        <p>The board has its own integration and end-to-end suites (board data, order detail, move commands, ETA facts) alongside the app's Vitest unit tests. Shared components are checked in Playwright with axe-core against WCAG 2.2 AA, plus keyboard and visual-catalog tests.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <p class="next">Next: <a href="/development/storefront/">Magic Dragon storefront</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>Dave Aiello</span>
+      <span><a href="/about/#contact">Contact</a></span>
+    </div>
+  </footer>
+  <script src="/development/dev.js"></script>
+</body>
+</html>

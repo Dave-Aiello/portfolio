@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dispatch board (jQuery) · David Aiello</title>
+  <meta name="description" content="A delivery dispatch board built with jQuery and the HTML5 Drag and Drop API, with full keyboard support.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="board.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="bar-title">
+      <h1>Dispatch</h1>
+      <p class="clock" id="clock"></p>
+    </div>
+    <p class="stats" id="stats"></p>
+    <div class="bar-actions">
+      <button type="button" class="btn btn-primary" id="new-order">New order</button>
+      <button type="button" class="btn" id="undo" disabled>Undo</button>
+      <button type="button" class="btn" id="reset">Reset</button>
+      <a class="btn btn-link" href="/development/jquery-dispatch-board/">How it works</a>
+    </div>
+    <p id="dnd-help" class="visually-hidden">Press Space to pick up the order. Use the arrow keys to move it, Space to drop it, or Escape to cancel.</p>
+  </header>
+
+  <main id="board" class="board" aria-busy="true" aria-label="Dispatch board"></main>
+
+  <div id="toast" class="toast" hidden>
+    <span id="toast-text"></span>
+    <button type="button" class="toast-undo" id="toast-undo">Undo</button>
+  </div>
+  <div id="live" class="visually-hidden" aria-live="assertive" aria-atomic="true"></div>
+
+  <noscript><p class="load-error">This board needs JavaScript.</p></noscript>
+
+  <script src="../../vendor/jquery/jquery-3.7.1.min.js"></script>
+  <script src="eta.js"></script>
+  <script src="board.js"></script>
+</body>
+</html>

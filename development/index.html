@@ -4,11 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Development, Dave Aiello</title>
-  <meta name="description" content="Front-end development work by Dave Aiello.">
+  <meta name="description" content="Front-end work by Dave Aiello: the Magic Dragon dispatch board and storefront, The Main Vine, and working jQuery and Bootstrap demos.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/development/dev.css">
 </head>
 <body>
   <header class="site-header">
@@ -23,20 +24,98 @@
   </header>
 
   <main>
-    <section class="case-head wrap narrow">
+    <section class="intro wrap">
       <h1>Development</h1>
-      <p class="lede">I also build what I design. My front-end work lives on its own site.</p>
-      <div class="actions">
-        <a class="button todo" href="#">Front-end portfolio</a>
+      <p class="lede">I also build what I design. Three projects that people use, then smaller pieces, including two working demos you can try here.</p>
+    </section>
+
+    <section class="work wrap" aria-label="Featured development work">
+      <a class="project" href="/development/dispatch-board/">
+        <div class="project-text">
+          <h2>Magic Dragon dispatch board: a delivery night on one screen</h2>
+          <p>Dispatchers drag orders into driver lanes, reorder stops and see a real ETA on every card. Updates stream to every open board, so two dispatchers can work the same night.</p>
+          <span class="project-link">Read the case study</span>
+          <span class="project-meta">Real product, 2026 · React, TypeScript, HTML5 Drag and Drop</span>
+        </div>
+        <div class="project-art landscape">
+          <img src="/development/img/md-board-drag.webp" alt="The dispatch board with an order being dragged into a driver lane" loading="lazy" width="1440" height="600">
+        </div>
+      </a>
+      <a class="project" href="/development/storefront/">
+        <div class="project-text">
+          <h2>Magic Dragon storefront: a menu and checkout built for one hand</h2>
+          <p>The web menu customers order from. Category rails, a quick view with managed focus, sign-in by text code, and a 21+ age gate that still lets search engines read the menu.</p>
+          <span class="project-link">Read the case study</span>
+          <span class="project-meta">Real product, 2026 · Next.js, CSS Modules, WCAG 2.2 AA</span>
+        </div>
+        <div class="project-art">
+          <img src="/development/img/sf-deals-phone.webp" alt="Deals page on a phone" loading="lazy" width="780" height="1046">
+          <img src="/development/img/sf-bag-phone.webp" alt="The bag on a phone with a purchase limit row" loading="lazy" width="780" height="1266">
+          <img src="/development/img/sf-login-phone.webp" alt="Sign-in dialog with a phone number field" loading="lazy" width="390" height="844">
+        </div>
+      </a>
+      <a class="project" href="/development/the-main-vine/">
+        <div class="project-text">
+          <h2>The Main Vine: every giant pumpkin since 2005, in one family tree</h2>
+          <p>Growers pick seeds by pedigree, but weigh-off results list parents as hand-typed names. This site links 65,581 entries into family trees you can explore, with the inbreeding math done in the browser.</p>
+          <span class="project-link">Read the case study</span>
+          <span class="project-meta">Personal project, 2026 · JavaScript, Vercel Functions, Postgres</span>
+        </div>
+        <div class="project-art landscape">
+          <img src="/development/img/vine-ped.webp" alt="A pedigree tree of a 3,156 lb pumpkin, three generations back" loading="lazy" width="1600" height="831">
+        </div>
+      </a>
+    </section>
+
+    <section class="more">
+      <div class="wrap">
+        <h2>More work</h2>
+        <div class="grid-2">
+          <a class="mini" href="/development/jquery-dispatch-board/">
+            <div class="mini-art"><img src="/development/img/demo-board.webp" alt="" loading="lazy"></div>
+            <div class="mini-text">
+              <h3>Dispatch board in jQuery</h3>
+              <p>The board rebuilt with no framework: HTML5 drag and drop, full keyboard control, undo and tested ETA math.</p>
+              <span class="project-meta">Working demo · jQuery, HTML5 Drag and Drop, QUnit</span>
+            </div>
+          </a>
+          <a class="mini" href="/development/field-reports/">
+            <div class="mini-art"><img src="/development/img/demo-field-report.webp" alt="" loading="lazy"></div>
+            <div class="mini-text">
+              <h3>Field Reports</h3>
+              <p>An inspection app that keeps working with no signal: photos, GPS, a signature and a printable report.</p>
+              <span class="project-meta">Working demo · Bootstrap 5, IndexedDB, Service Worker</span>
+            </div>
+          </a>
+          <a class="mini" href="/development/magicdragonsoftware/">
+            <div class="mini-art"><img src="/development/img/mds-fleet-map-poster.webp" alt="" loading="lazy"></div>
+            <div class="mini-text">
+              <h3>magicdragonsoftware.com</h3>
+              <p>A product site that shows the software running instead of screenshots: an animated board and a canvas fleet map.</p>
+              <span class="project-meta">Real product, 2026 · HTML, CSS, JavaScript, Canvas</span>
+            </div>
+          </a>
+          <a class="mini" href="/development/token-labs/">
+            <div class="mini-art text"><strong>Token Labs</strong>2014–2020</div>
+            <div class="mini-text">
+              <h3>Token Labs wallet</h3>
+              <p>A web wallet for holding and sending several cryptocurrencies from one account, with the customer holding the keys.</p>
+              <span class="project-meta">Real product, 2014–2020 · jQuery, Bootstrap, JavaScript</span>
+            </div>
+          </a>
+        </div>
       </div>
     </section>
+
     <section class="section">
-      <div class="wrap narrow">
+      <div class="wrap">
         <h2>What I build with</h2>
-        <div class="grid-2" style="margin-top:16px">
-          <div class="card"><h3>Front end</h3><p>HTML, CSS, JavaScript, React and Next.js.</p></div>
+        <div class="grid-3" style="margin-top:16px">
+          <div class="card"><h3>Front end</h3><p>HTML, CSS, JavaScript and TypeScript. React and Next.js, and jQuery and Bootstrap when a site already runs on them.</p></div>
           <div class="card"><h3>Mobile</h3><p>React Native and Expo for the driver app on the delivery platform.</p></div>
-          <div class="card"><h3>Prototypes</h3><p>The Steady prototype on this site is plain HTML, CSS and JavaScript, with no build step.</p></div>
+          <div class="card"><h3>Data</h3><p>Postgres and small serverless APIs on Vercel, as in The Main Vine.</p></div>
+          <div class="card"><h3>Testing</h3><p>Playwright end-to-end tests with axe-core accessibility checks, Vitest and QUnit.</p></div>
+          <div class="card"><h3>Prototypes</h3><p>The prototypes on the Design tab are plain HTML, CSS and JavaScript, with no build step.</p></div>
           <div class="card"><h3>Tools</h3><p>AI coding assistants, Figma plugins, Playwright for screenshots and visual checks.</p></div>
         </div>
       </div>
@@ -51,4 +130,3 @@
   </footer>
 </body>
 </html>
-
