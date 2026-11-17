@@ -26,15 +26,15 @@
   <main>
     <section class="case-head wrap">
       <h1>The Main Vine</h1>
-      <p class="lede">Giant pumpkin growers choose next year’s seeds by pedigree, but the weigh-off results only list each fruit’s parents as hand-typed names like “2365 Wolf 2021.” The Main Vine links every result since 2005 into family trees you can search and explore.</p>
+      <p class="lede">Giant pumpkin growers compete to grow the heaviest pumpkin, and they pick their seeds by studying a plant’s family history, the way dog or horse breeders do. The official results record each pumpkin’s parents, but only as typed-in names, so following a family back meant looking up one name at a time. The Main Vine connects every result since 2005 into family trees you can search and click through.</p>
       <div class="actions">
         <a class="button" href="https://the-main-vine.vercel.app/">Visit the site</a>
-        <a class="button secondary" href="https://the-main-vine.vercel.app/#/fruit/35586">Open a pedigree</a>
+        <a class="button secondary" href="https://the-main-vine.vercel.app/#/fruit/35586">Open a family tree</a>
       </div>
       <dl class="facts-row">
         <div><dt>Type</dt><dd>Personal project, 2026</dd></div>
         <div><dt>My role</dt><dd>Everything: data, API, design and front end</dd></div>
-        <div><dt>Data</dt><dd>65,581 weigh-off entries, 8 classes, 2005 to 2026</dd></div>
+        <div><dt>Data</dt><dd>65,581 contest results in 8 categories, 2005 to 2026</dd></div>
         <div><dt>Stack</dt><dd>Vanilla JavaScript, CSS, a Vercel Function, Neon Postgres</dd></div>
       </dl>
     </section>
@@ -43,19 +43,27 @@
       <div class="wrap">
         <figure class="dev-figure">
           <img src="/development/img/vine-home.webp" alt="The Main Vine home page: a headline about every GPC fruit and cross, the heaviest pumpkin ever at 3,156 lb, and a table of the biggest of all time." width="1600" height="1000" loading="lazy" decoding="async">
-          <figcaption>The home page leads with the heaviest pumpkin ever weighed and the all-time list.</figcaption>
+          <figcaption>The home page shows the heaviest pumpkin ever weighed and the all-time top list.</figcaption>
         </figure>
       </div>
     </section>
 
     <section class="section">
       <div class="wrap prose">
+        <h2>Some background</h2>
+        <p>Every fall, growers bring their biggest pumpkins to official contests called weigh-offs. The record is now 3,156 pounds. The Great Pumpkin Commonwealth (GPC), which sets the rules for these contests, publishes every result.</p>
+        <p>Growers save seeds from their best pumpkins and trade them, and a pumpkin is known by its weight, the grower’s last name and the year. So “2365 Wolf 2021” is the 2,365-pound pumpkin a grower named Wolf grew in 2021. Each result lists two parents: the seed the pumpkin grew from, which is its mother, and the plant that pollinated it, which is its father.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
         <h2>The problem</h2>
-        <p>The Great Pumpkin Commonwealth (GPC) publishes every weigh-off as a table: weight, grower, site, and the seed and pollinator written as text. To trace a winning pumpkin back through its family, a grower has to search for each parent by name, one year at a time.</p>
+        <p>The results are published as tables, with the parents written in as plain text. To trace a winning pumpkin’s family, a grower had to look up each parent by name, then that parent’s parents, one year at a time. The names cause problems too:</p>
         <ul>
-          <li><strong>Parents are typed by hand.</strong> “2020 Paton” might mean one fruit, two fruits, or a misspelling of “2020 Patton.”</li>
-          <li><strong>A pollinator name hides half the story.</strong> It says which seed the pollen plant grew from, not what that plant produced.</li>
-          <li><strong>It isn’t only pumpkins.</strong> Eight classes, from Atlantic Giant pumpkins to tomatoes, marrows and long gourds.</li>
+          <li><strong>They’re typed by hand.</strong> “2020 Paton” could mean one pumpkin, two different pumpkins, or a misspelling of “2020 Patton.”</li>
+          <li><strong>The father is only half there.</strong> The results name the seed the father plant grew from, not what that plant went on to grow.</li>
+          <li><strong>It isn’t only pumpkins.</strong> There are eight categories, including giant squash, tomatoes, marrows and long gourds.</li>
         </ul>
       </div>
     </section>
@@ -63,25 +71,25 @@
     <section class="section">
       <div class="wrap prose">
         <h2>Turning typed names into links</h2>
-        <p>A scraper loads the published results into Postgres. Each seed and pollinator name is matched to a weighed fruit by weight, grower surname and year, allowing for small misspellings and missing years.</p>
+        <p>A script loads the published results into a Postgres database. Then each parent’s name is matched to a real, weighed pumpkin by its weight, the grower’s last name and the year, allowing for small typos and missing years.</p>
         <ul>
-          <li>A name that fits exactly one fruit becomes a link.</li>
+          <li>A name that fits exactly one pumpkin becomes a link.</li>
           <li>A name that fits several is shown as “needs review,” with every candidate, and drawn with a dashed line in the tree.</li>
-          <li>A name that isn’t found, because the fruit is older than 2005 or was never weighed at a GPC site, stays as plain text.</li>
+          <li>A name that isn’t found, because the pumpkin is older than 2005 or was never weighed at an official contest, stays as plain text.</li>
         </ul>
-        <p>For the pollinator, the site looks at the same grower’s other fruit that season. If exactly one grew from the pollinator seed, that is almost certainly the plant the pollen came from, and the tree shows what it grew. The site says plainly that these are strong hints, not certainties.</p>
+        <p>For the father, the site looks at the same grower’s other pumpkins that season. If exactly one of them grew from the father’s seed, it’s almost certainly the plant the pollen came from, so the tree shows what that plant grew. The site says plainly that these are strong guesses, not certainties.</p>
       </div>
     </section>
 
     <section class="section">
       <div class="wrap prose">
         <h2>The family tree</h2>
-        <p>The family tree is the main part of the site, and I drew it without a charting library. Each fruit is a real HTML card with links and buttons, positioned absolutely; the connecting lines are thin elements placed from the same coordinates.</p>
+        <p>The family tree is the main part of the site, and I drew it without a charting library. Each pumpkin is a real HTML card with links and buttons, positioned absolutely; the connecting lines are thin elements placed from the same coordinates.</p>
         <figure class="dev-figure">
           <img src="/development/img/vine-ped.webp" alt="Pedigree of 3156 Wallace 2026, three generations back, with seed and pollinator cards, what each pollinator plant grew, and a side panel for the selected fruit." width="1600" height="831" loading="lazy" decoding="async">
-          <figcaption>The pedigree of the heaviest pumpkin on record. Each card shows weight, over-the-top measurement and how it did against the weight chart.</figcaption>
+          <figcaption>The family tree of the heaviest pumpkin on record. Each card shows the weight, a tape measurement of the pumpkin’s size, and how much heavier or lighter it was than that size usually predicts.</figcaption>
         </figure>
-        <p>The layout is one recursive pass. Parents are placed first, top to bottom, and each fruit is then centered on its first and last parent, so the tree never overlaps however unevenly it branches:</p>
+        <p>The layout is one recursive pass. Parents are placed first, top to bottom, and each pumpkin is then centered on its first and last parent, so the tree never overlaps however unevenly it branches:</p>
         <pre tabindex="0"><code>const place = (n, top) =&gt; {
   n.h = heightOf(n);
   n.x = colX(n.gen);
@@ -104,7 +112,7 @@
           <li>Show 2 to 8 generations, or open and close any branch on its own.</li>
           <li>Fold repeated ancestors: a famous seed that appears many times in a tree is drawn once and marked ×N.</li>
           <li>From the fourth generation back, cards shrink to one line, so a deep tree stays readable.</li>
-          <li>Two ways to show what each pollinator plant grew. The choice is saved in <code>localStorage</code>.</li>
+          <li>Two ways to show what each father plant grew. The choice is saved in <code>localStorage</code>.</li>
           <li>Drag the empty part of the tree to move around it, like a map. Pointer Events with pointer capture keep the drag smooth, and buttons and links inside the tree still work.</li>
         </ul>
       </div>
@@ -113,7 +121,7 @@
     <section class="section">
       <div class="wrap prose">
         <h2>Working out inbreeding</h2>
-        <p>Every fruit page shows its inbreeding coefficient, how many generations are on record, and how many distinct ancestors. The coefficient is the kinship of the fruit’s two parents, and kinship is defined recursively: the kinship of two fruits is the average kinship of the younger one’s parents with the older one. Memoizing each pair keeps a 13-generation tree fast.</p>
+        <p>Breeders keep an eye on inbreeding, because crossing close relatives too often can weaken a line. Every pumpkin’s page shows its inbreeding coefficient, how many generations are on record and how many different ancestors it has. The coefficient is the kinship of the pumpkin’s two parents, and kinship is defined recursively: the kinship of two pumpkins is the average kinship of the younger one’s parents with the older one. Saving the result for each pair keeps a 13-generation tree fast.</p>
         <pre tabindex="0"><code>const kin = (a, b) =&gt; {
   if (a == null || b == null) return 0;
   if (!N[a] || !N[b]) return a === b ? 0.5 : 0;
@@ -140,7 +148,7 @@
           <li>One Vercel Function, <code>/api/v1</code>, answers six questions: <code>meta</code>, <code>top</code>, <code>fruit</code>, <code>search</code>, <code>grower</code> and <code>results</code>. It queries Neon Postgres through its serverless driver.</li>
           <li>Responses use the short field names the front end reads directly, which keeps payloads small for a 65,000-row dataset.</li>
           <li>The front end caches each request by its query string and drops failed ones, so going back is instant and a retry actually retries.</li>
-          <li>Hash routes give every fruit, grower, year and search its own address, so a grower can share a link to a pedigree and the Back button works.</li>
+          <li>Hash routes give every pumpkin, grower, year and search its own address, so a grower can share a link to a pedigree and the Back button works.</li>
         </ul>
       </div>
     </section>
@@ -156,7 +164,7 @@
         </figure>
         <figure class="dev-figure">
           <img src="/development/img/vine-phone-fruit.webp" alt="A fruit page on a phone with weight, OTT, chart comparison, inbreeding and ancestors on record." width="780" height="1688" loading="lazy" decoding="async">
-          <figcaption>A fruit page</figcaption>
+          <figcaption>A pumpkin’s page</figcaption>
         </figure>
         </div>
         <p class="small">Data: GPC weigh-off results published on BigPumpkins.com.</p>

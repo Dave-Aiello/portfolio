@@ -24,7 +24,7 @@
 
   <main>
     <section class="case-head wrap">
-      <h1>Steady: a first crypto purchase in an everyday money app</h1>
+      <h1>Steady: buying crypto for the first time</h1>
       <p class="lede">More money apps now offer crypto, and most of their customers have never bought any. I designed the first purchase for that person: someone who checks their balance before payday and wants to try $25 of Bitcoin without feeling tricked.</p>
       <div class="actions">
         <a class="button" href="/prototype/steady/">Open the prototype</a>
@@ -42,7 +42,7 @@
       <div class="wrap prose">
         <h2>The problem</h2>
         <p>Crypto apps tend to design the first purchase for people who already know what a spread or a network fee is. An everyday money app can't. Its customers are careful with money, and a bad first experience costs trust in the whole account, not just the crypto tab.</p>
-        <p>I've worked on crypto products since founding Token Labs in 2015. Going in, I designed around four worries a first-time buyer has:</p>
+        <p>I've worked on crypto products since I started Token Labs in 2014. I designed around four worries I expect a first-time buyer to have:</p>
         <ul>
           <li><b>Losing money.</b> Prices move, and nobody explains how much.</li>
           <li><b>Hidden costs.</b> The fee shows up after you've committed.</li>
@@ -57,10 +57,10 @@
       <div class="wrap prose">
         <h2>Goals</h2>
         <div class="grid-2">
-          <div class="card"><h3>Two taps to a first buy</h3><p>Preset amounts and a short path from Home, so trying it costs almost no effort.</p></div>
-          <div class="card"><h3>No surprises at the end</h3><p>The price, the fee and the total are shown in dollars before Face ID, and stay put while you decide.</p></div>
-          <div class="card"><h3>An obvious way out</h3><p>Selling back to Checking is part of the first explanation, not something to discover later.</p></div>
-          <div class="card"><h3>Safe to move coins out</h3><p>People who move crypto to their own wallet get protection against the most common way they lose it.</p></div>
+          <div class="card"><h3>Make the first buy quick</h3><p>Preset amounts and a short path from Home make it easy to try.</p></div>
+          <div class="card"><h3>Show the full cost up front</h3><p>The price, the fee and the total are shown in dollars before Face ID, and they don't change while you decide.</p></div>
+          <div class="card"><h3>Make it clear how to sell</h3><p>Selling back to Checking is explained before the first buy, so nobody has to figure it out later.</p></div>
+          <div class="card"><h3>Protect people sending crypto out</h3><p>When people move crypto to their own wallet, the app protects them from the most common way it gets lost.</p></div>
         </div>
       </div>
     </section>
@@ -71,15 +71,15 @@
 
         <div class="decision">
           <div>
-            <h3>Crypto is a tile on Home, not a takeover</h3>
-            <p>It sits next to everything else in the account, and the tile leads with the smallest amount you can buy. Cost is the first worry, so the entry point answers it.</p>
+            <h3>Crypto is one tile on Home</h3>
+            <p>It sits next to everything else in the account, and the tile shows the smallest amount you can buy, because cost is the first thing people worry about.</p>
           </div>
           <div class="shots"><figure><img src="img/home.png" alt="Home screen with a Crypto tile" loading="lazy" width="390" height="844"></figure></div>
         </div>
 
         <div class="decision">
           <div>
-            <h3>Four facts, shown once, risk first</h3>
+            <h3>One screen of plain facts before the first buy</h3>
             <p>Before the first buy, one screen covers the four worries in plain words. "Prices move a lot" comes first, not last. The disclosure sits right next to the button instead of behind a link. After the first purchase this screen never appears again.</p>
           </div>
           <div class="shots"><figure><img src="img/intro.png" alt="Before your first buy screen with four facts" loading="lazy" width="390" height="844"></figure></div>
@@ -87,7 +87,7 @@
 
         <div class="decision">
           <div>
-            <h3>Dollars first, and three choices instead of three hundred</h3>
+            <h3>Amounts in dollars, and only three coins to choose from</h3>
             <p>People think in what they spend, so the dollar amount is big and the coin amount is the secondary line. Preset chips cover most first purchases. The asset list stops at three, and the stablecoin gets one line of explanation because "USDC" means nothing to a first-time buyer.</p>
           </div>
           <div class="shots">
@@ -98,15 +98,15 @@
 
         <div class="decision">
           <div>
-            <h3>Catch problems on the keypad, with the fix attached</h3>
-            <p>If the amount plus the fee is more than the Checking balance, the number turns red as you type and the button changes to move the difference from Savings. Nobody should tap Review only to be told no.</p>
+            <h3>Catching a low balance while you type</h3>
+            <p>If the amount plus the fee is more than the Checking balance, the number turns red as you type and the button changes to move the difference from Savings. That way nobody taps Review only to be told no.</p>
           </div>
           <div class="shots"><figure><img src="img/amount-over.png" alt="Amount over balance with a move from Savings button" loading="lazy" width="390" height="844"></figure></div>
         </div>
 
         <div class="decision">
           <div>
-            <h3>A price hold you can see, and the fee before Face ID</h3>
+            <h3>Holding the price, and showing the fee before Face ID</h3>
             <p>The quote is held for 30 seconds with a visible countdown, so the number you agree to is the number you pay. The fee is shown in dollars and as a percent. The Face ID sheet repeats the total, so the last thing you see before paying is what you pay.</p>
             <p>There's also an optional monthly limit, on by default for a first purchase. It's a small, visible way of saying the app isn't trying to get you to buy more.</p>
           </div>
@@ -118,7 +118,7 @@
 
         <div class="decision">
           <div>
-            <h3>When the hold runs out, nothing changes silently</h3>
+            <h3>When the price hold runs out</h3>
             <p>If you wait too long, the screen says the hold ended, shows the new price and what it does to your order in dollars, and confirms nothing was charged. One button gets a fresh price.</p>
           </div>
           <div class="shots"><figure><img src="img/review-expired.png" alt="Expired price hold" loading="lazy" width="390" height="844"></figure></div>
@@ -126,7 +126,7 @@
 
         <div class="decision">
           <div>
-            <h3>Gain or loss against what you paid</h3>
+            <h3>Showing gain or loss against what you paid</h3>
             <p>Most crypto screens lead with the 24-hour change. A first-time owner wants to know one thing: am I up or down? So the headline compares today's value with what you paid, fee included, and the chart marks your purchase price.</p>
           </div>
           <div class="shots">
@@ -137,19 +137,19 @@
 
         <div class="decision">
           <div>
-            <h3>Assume the clipboard can lie</h3>
+            <h3>Checking pasted addresses</h3>
             <p>Address poisoning is a common scam: someone sends a tiny deposit from an address that starts and ends like one you use, hoping you'll copy it from your history later. Steady compares every pasted address with your saved ones. If it's a near match, it says so, marks exactly which characters differ, and offers your saved wallet as the main action.</p>
           </div>
           <div class="shots">
             <figure><img src="img/send-pasted.png" alt="Pasted address that looks right" loading="lazy" width="390" height="844"><figcaption>Looks right</figcaption></figure>
-            <figure><img src="img/send-check.png" alt="Address check showing the differences" loading="lazy" width="390" height="844"><figcaption>Isn't</figcaption></figure>
+            <figure><img src="img/send-check.png" alt="Address check showing the differences" loading="lazy" width="390" height="844"><figcaption>The check</figcaption></figure>
           </div>
         </div>
 
         <div class="decision">
           <div>
             <h3>A $1 test before the first real send</h3>
-            <p>Crypto sends can't be reversed. The first time you send to an address, Steady suggests sending $1, checking it arrived, and then sending the rest, with a reminder. The confirmation sets expectations on timing so nobody refreshes in a panic.</p>
+            <p>Crypto sends can't be reversed. The first time you send to an address, Steady suggests sending $1, checking it arrived, and then sending the rest, with a reminder. The confirmation says how long it should take, so people know how long to wait.</p>
           </div>
           <div class="shots">
             <figure><img src="img/send-test.png" alt="Suggest a $1 test send" loading="lazy" width="390" height="844"><figcaption>Test first</figcaption></figure>
@@ -177,7 +177,7 @@
           <li><b>Color variables</b> for surfaces, text, brand, status and assets, so a dark mode is one new mode away.</li>
           <li><b>Text styles</b> from display amounts down to captions.</li>
           <li><b>Components</b> with variants: Button (style and state), Chip (selected), Keypad key, status bar, tab bar and home indicator.</li>
-          <li><b>Two flows</b> in sections, each frame annotated with the reasoning behind it.</li>
+          <li><b>Two flows</b> in sections, with notes on each screen explaining the decisions.</li>
         </ul>
         <p><a class="todo" href="#">Figma link goes here once the file is published</a></p>
       </div>
@@ -187,7 +187,7 @@
       <div class="wrap prose">
         <h2>How I worked</h2>
         <p>I used AI tools to move faster without giving up control of the decisions. I wrote the flows, rules and copy, then used an AI coding assistant to turn them into a working prototype I could click through and adjust in minutes. A small Figma plugin builds the Figma file straight from the prototype, so the two never drift apart.</p>
-        <p>That loop made edge cases cheap to explore. The expired price hold, the over-balance amount and the look-alike address each started as a "what if" and became a screen the same day.</p>
+        <p>Working this way made it easy to explore edge cases. The expired price hold, the over-balance amount and the look-alike address each started as a "what if" and became a screen the same day.</p>
       </div>
     </section>
 
