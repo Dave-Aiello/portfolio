@@ -37,7 +37,7 @@
   <main>
     <section class="case-head wrap">
       <h1>The Main Vine: family trees for giant pumpkins</h1>
-      <p class="lede">Giant pumpkin growers choose their seeds by studying a plant's family history, the way horse breeders study bloodlines. The official results only list each pumpkin's parents as typed-in names. I linked every result since 2005 into family trees, then redesigned the site around a fan-shaped tree that shows five generations on one screen.</p>
+      <p class="lede">Giant pumpkin growers choose their seeds by studying a plant's family history, the way horse breeders study bloodlines. The official results only list each pumpkin's parents as typed-in names. I linked every result since 2005 into family trees, then redesigned the site around a fan-shaped tree that fits up to five generations on one screen.</p>
       <div class="actions">
         <a class="button" href="https://themainvine.com">Visit the site</a>
         <a class="button secondary" href="/development/the-main-vine/">How I built it</a>
@@ -53,7 +53,7 @@
     <section class="section">
       <div class="wrap">
         <figure class="hero-figure">
-          <img src="img/fruit-desktop.webp" alt="HERO_ALT" width="1600" height="1000">
+          <img src="img/home-desktop.webp" alt="The Main Vine home page. The headline reads &quot;2731.5 Stelts 2024 is the mother of the heaviest pumpkin ever weighed&quot;, above a fan-shaped family tree with mothers in orange and fathers in green." width="1600" height="1056">
         </figure>
       </div>
     </section>
@@ -74,7 +74,7 @@
           <figure><img src="/development/img/vine-home.webp" alt="The first version's home page, with a header band and a list of the heaviest pumpkins" loading="lazy" width="1600" height="1000"><figcaption>Before: home</figcaption></figure>
           <figure><img src="/development/img/vine-ped.webp" alt="The first version's family tree, a tall column of cards joined by lines" loading="lazy" width="1600" height="831"><figcaption>Before: family tree</figcaption></figure>
         </div>
-        <p>I tried six visual directions in two rounds of mockups. The first three played it too safe. The second round pushed harder on type, color and real photos, and I picked the one I called Bloodlines: a dark look inspired by the record books horse breeders keep, built around the fan.</p>
+        <p>I tried six visual directions in two rounds of mockups. The first three played it too safe. The second round pushed harder on type and color, and I picked the one I called Bloodlines: a dark look inspired by the record books horse breeders keep, built around the fan.</p>
       </div>
     </section>
 
@@ -85,41 +85,42 @@
         <div class="decision stack">
           <div>
             <h3>A fan instead of a standard tree</h3>
-            <p>A standard family tree adds a column for every generation, so by the fifth one you're scrolling through a tall strip of cards. The fan puts the pumpkin in the middle and each generation in a ring around it. Five generations fit on one screen, and a pumpkin's two parents always sit right next to each other.</p>
+            <p>A standard family tree adds a column for every generation, so by the fifth one you're scrolling through a tall strip of cards. The fan puts the pumpkin in the middle and each generation in a ring around it. It shows four generations to start, up to five fit on one screen, and a pumpkin's two parents always sit right next to each other.</p>
           </div>
-          <figure class="wide"><img src="img/tree-desktop.webp" alt="TREE_ALT" loading="lazy" width="1600" height="1000"></figure>
+          <figure class="wide"><img src="img/tree-desktop.webp" alt="The family tree for 3156 Wallace 2026, the heaviest pumpkin of the year, four generations back. Mothers are orange and fathers are green. The father's side is a single dark, dashed slice marked Not on record." loading="lazy" width="1600" height="867"></figure>
         </div>
 
         <div class="decision stack">
           <div>
             <h3>Color shows weight</h3>
-            <p>The heavier a pumpkin was, the deeper its color in the fan. You can see which side of a family produced the big ones without reading a single number, and the numbers are there when you want them.</p>
+            <p>Mothers are orange and fathers are green, and the heavier a pumpkin was, the deeper its color. You can see which side of a family produced the big ones without reading a single number, and the weights are there when you want them.</p>
           </div>
         </div>
 
         <div class="decision stack">
           <div>
             <h3>The trade-off: five generations, then recenter</h3>
-            <p>A fan runs out of room faster than a list does, so it stops at five generations. To go further back, click any ancestor and the tree turns to put it in the middle. The back button takes you to where you were.</p>
+            <p>A fan runs out of room faster than a list does, so it stops at five generations. To go further back, click any ancestor and the tree redraws with it in the middle. A Back button, or the browser's own back button, returns you to where you started. For anyone who'd rather read than click, the same tree is also available as a list.</p>
           </div>
-          <figure class="wide"><img src="img/tree-recentered-desktop.webp" alt="RECENTER_ALT" loading="lazy" width="1600" height="1000"></figure>
+          <figure class="wide"><img src="img/tree-recentered-desktop.webp" alt="The tree recentered on 2731.5 Stelts 2024, with a Back to 3156 Wallace 2026 button above it." loading="lazy" width="1600" height="1000"></figure>
         </div>
 
         <div class="decision stack">
           <div>
             <h3>Being honest about what the data doesn't know</h3>
-            <p>Parents are typed in by hand, so some names fit more than one pumpkin. Those keep the name as it was typed and get a mark that says the match isn't certain. A parent with no record says "Not on record." When the father was a plant that never went to a weigh-off, the site shows its best guess and says so. An ancestor that appears more than once gets a dot, so a line that's been crossed back on itself is easy to spot.</p>
+            <p>Parents are typed in by hand, so some names fit more than one pumpkin. Those keep the name as it was typed, with a question mark, and in the tree they say "Not sure which." A parent that doesn't match any pumpkin gets a dashed slice that says "Not on record," and the page explains why it might be missing. The results name the seed the father plant grew from, not what that plant went on to grow, so when the site can work out the plant, it calls it a strong guess. An ancestor that appears more than once gets a dot, so a line that's been crossed back on itself is easy to spot.</p>
           </div>
+          <figure class="wide"><img src="img/parents-desktop.webp" alt="Three notes under the tree: the mother, 2731.5 Stelts 2024; the father, 2020 Paton 2023 DMG, not on record, with a note that the name says the pumpkin was damaged; and what the father plant grew, also not on record." loading="lazy" width="1600" height="278"></figure>
         </div>
 
         <div class="decision">
           <div>
             <h3>On a phone</h3>
-            <p>Phones show four generations, so every slice stays big enough to tap. Tapping an ancestor recenters the tree, the same as clicking on a computer.</p>
+            <p>Phones show up to four generations, so the slices stay big enough to tap. The first tap on an ancestor shows who it is, and a second tap puts it in the middle.</p>
           </div>
           <div class="shots">
-            <figure><img src="img/home-phone.webp" alt="PHONE_HOME_ALT" loading="lazy" width="780" height="1688"><figcaption>Home</figcaption></figure>
-            <figure><img src="img/tree-phone.webp" alt="PHONE_TREE_ALT" loading="lazy" width="780" height="1688"><figcaption>Family tree</figcaption></figure>
+            <figure><img src="img/home-phone.webp" alt="The home page on a phone: the headline, a search box and the top of the family tree" loading="lazy" width="780" height="1688"><figcaption>Home</figcaption></figure>
+            <figure><img src="img/tree-phone.webp" alt="The family tree on a phone, four generations back, with the 2, 3 and 4 generation buttons above it" loading="lazy" width="780" height="1688"><figcaption>Family tree</figcaption></figure>
           </div>
         </div>
       </div>
@@ -139,7 +140,7 @@
           <li>A seed shop, where every seed links to its family tree, with Shopify handling checkout.</li>
           <li>Testing the fan with growers who've never seen it: can they find a pumpkin's grandparents without help?</li>
         </ul>
-        <p class="small">Pumpkin photos by David Politzer on Wikimedia Commons, used under CC BY-SA. Contest results are published by the Great Pumpkin Commonwealth.</p>
+        <p class="small">Contest results are published by the Great Pumpkin Commonwealth.</p>
       </div>
     </section>
   </main>
