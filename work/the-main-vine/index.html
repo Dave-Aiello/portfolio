@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Main Vine case study, Dave Aiello</title>
+  <meta name="description" content="How I redesigned The Main Vine, a family tree site for giant pumpkin growers, around a fan-shaped tree that shows five generations on one screen.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    .wide { margin: 24px 0 0; }
+    .wide img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+    .wide figcaption { font-size: 13px; color: var(--text-3); margin-top: 8px; }
+    .decision.stack { grid-template-columns: minmax(0, 1fr); gap: 0; align-items: start; }
+    .decision.stack p { max-width: 680px; }
+    .before { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 24px; }
+    .before figure { margin: 0; }
+    .before img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+    .before figcaption { font-size: 13px; color: var(--text-3); margin-top: 8px; }
+    @media (max-width: 720px) { .before { grid-template-columns: minmax(0, 1fr); } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="name" href="/">Dave Aiello</a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="/" aria-current="page">Design</a>
+        <a href="/development/">Development</a>
+        <a href="/about/">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-head wrap">
+      <h1>The Main Vine: family trees for giant pumpkins</h1>
+      <p class="lede">Giant pumpkin growers choose their seeds by studying a plant's family history, the way horse breeders study bloodlines. The official results only list each pumpkin's parents as typed-in names. I linked every result since 2005 into family trees, then redesigned the site around a fan-shaped tree that shows five generations on one screen.</p>
+      <div class="actions">
+        <a class="button" href="https://themainvine.com">Visit the site</a>
+        <a class="button secondary" href="/development/the-main-vine/">How I built it</a>
+      </div>
+      <dl class="facts-row">
+        <div><dt>Type</dt><dd>Personal project, live</dd></div>
+        <div><dt>Platform</dt><dd>Web, desktop and phone</dd></div>
+        <div><dt>My role</dt><dd>Everything: data, design and front end</dd></div>
+        <div><dt>Data</dt><dd>65,581 contest results, 2005 to 2026</dd></div>
+      </dl>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <figure class="hero-figure">
+          <img src="img/fruit-desktop.webp" alt="HERO_ALT" width="1600" height="1000">
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Some background</h2>
+        <p>Every fall, growers bring their biggest pumpkins to official contests called weigh-offs, and every result is published. A pumpkin is known by its weight, the grower's last name and the year, so "2365 Wolf 2021" is the 2,365-pound pumpkin a grower named Wolf grew in 2021.</p>
+        <p>Each result also lists two parents: the seed the pumpkin grew from, which is its mother, and the plant whose pollen was used, which is its father. Growers trade seeds from famous pumpkins and plan crosses years ahead, so a pumpkin's family is a big part of what its seeds are worth.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>Why I redesigned it</h2>
+        <p>The first version did its job. It linked the results and drew the trees. But it looked like a generic template: a big header band, cards inside boxes, orange links everywhere, and the family tree halfway down the page as a tall strip you had to scroll through. For a site about families, the tree should be the first thing you see, and it should look like something a grower would want to share.</p>
+        <div class="before">
+          <figure><img src="/development/img/vine-home.webp" alt="The first version's home page, with a header band and a list of the heaviest pumpkins" loading="lazy" width="1600" height="1000"><figcaption>Before: home</figcaption></figure>
+          <figure><img src="/development/img/vine-ped.webp" alt="The first version's family tree, a tall column of cards joined by lines" loading="lazy" width="1600" height="831"><figcaption>Before: family tree</figcaption></figure>
+        </div>
+        <p>I tried six visual directions in two rounds of mockups. The first three played it too safe. The second round pushed harder on type, color and real photos, and I picked the one I called Bloodlines: a dark look inspired by the record books horse breeders keep, built around the fan.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2>Key decisions</h2>
+
+        <div class="decision stack">
+          <div>
+            <h3>A fan instead of a standard tree</h3>
+            <p>A standard family tree adds a column for every generation, so by the fifth one you're scrolling through a tall strip of cards. The fan puts the pumpkin in the middle and each generation in a ring around it. Five generations fit on one screen, and a pumpkin's two parents always sit right next to each other.</p>
+          </div>
+          <figure class="wide"><img src="img/tree-desktop.webp" alt="TREE_ALT" loading="lazy" width="1600" height="1000"></figure>
+        </div>
+
+        <div class="decision stack">
+          <div>
+            <h3>Color shows weight</h3>
+            <p>The heavier a pumpkin was, the deeper its color in the fan. You can see which side of a family produced the big ones without reading a single number, and the numbers are there when you want them.</p>
+          </div>
+        </div>
+
+        <div class="decision stack">
+          <div>
+            <h3>The trade-off: five generations, then recenter</h3>
+            <p>A fan runs out of room faster than a list does, so it stops at five generations. To go further back, click any ancestor and the tree turns to put it in the middle. The back button takes you to where you were.</p>
+          </div>
+          <figure class="wide"><img src="img/tree-recentered-desktop.webp" alt="RECENTER_ALT" loading="lazy" width="1600" height="1000"></figure>
+        </div>
+
+        <div class="decision stack">
+          <div>
+            <h3>Being honest about what the data doesn't know</h3>
+            <p>Parents are typed in by hand, so some names fit more than one pumpkin. Those keep the name as it was typed and get a mark that says the match isn't certain. A parent with no record says "Not on record." When the father was a plant that never went to a weigh-off, the site shows its best guess and says so. An ancestor that appears more than once gets a dot, so a line that's been crossed back on itself is easy to spot.</p>
+          </div>
+        </div>
+
+        <div class="decision">
+          <div>
+            <h3>On a phone</h3>
+            <p>Phones show four generations, so every slice stays big enough to tap. Tapping an ancestor recenters the tree, the same as clicking on a computer.</p>
+          </div>
+          <div class="shots">
+            <figure><img src="img/home-phone.webp" alt="PHONE_HOME_ALT" loading="lazy" width="780" height="1688"><figcaption>Home</figcaption></figure>
+            <figure><img src="img/tree-phone.webp" alt="PHONE_TREE_ALT" loading="lazy" width="780" height="1688"><figcaption>Family tree</figcaption></figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>How I worked</h2>
+        <p>I set the direction and made the calls on every screen. AI tools drew the mockups and wrote most of the code from my direction, which let me try six directions in two days and test the tree against the real data from the start, including the messy names.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap prose">
+        <h2>What's next</h2>
+        <ul>
+          <li>A seed shop, where every seed links to its family tree, with Shopify handling checkout.</li>
+          <li>Testing the fan with growers who've never seen it: can they find a pumpkin's grandparents without help?</li>
+        </ul>
+        <p class="small">Pumpkin photos by David Politzer on Wikimedia Commons, used under CC BY-SA. Contest results are published by the Great Pumpkin Commonwealth.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span><a href="/">All work</a></span>
+      <span><a href="/about/#contact">Contact</a></span>
+    </div>
+  </footer>
+</body>
+</html>
