@@ -1,0 +1,2 @@
+2cad0d5e01c2436f50bd4758359087cb1aca2e927edfcc78582c2085ef0b61a7  assets/app.js
+2d1aa6091e634fa88449e4bd8aac2be0dd9773a92e3aeb71e418244b4348a12e  assets/styles.css

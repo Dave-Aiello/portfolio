@@ -1,0 +1,220 @@
+--- live/assets/app.js	2026-11-22 22:30:58.228338508 +0000
++++ work/assets/app.js	2026-11-22 23:25:54.064198224 +0000
+@@ -185,23 +185,54 @@
+     const mothers = Array.from(tally.values()).sort((a, b) => b.n - a.n).slice(0, 5);
+     const placed = rows.filter((r) => r.st === 'placed').slice(0, 10);
+ 
++    // The top 5 seeds of the year's 100 heaviest, by matched mother, each with its own color.
++    const topSeed = mothers[0] || null;
++    const SEED_COLORS = ['#F58A1F', '#E9C46A', '#E5869A', '#7FB8DC', '#B4A3E8'];
++    const seedOf = new Map(mothers.map((t, k) => [t.id, k]));
++    const seedName = (t) => (t.id === hero.i ? hero.n : (t.raw || '')).replace(/\s+\d{4}$/, '');
++    const recThisYear = top1.y === year && thisYear;
++    // "3156 Wallace 2026" -> weight, grower, year
++    const parts = /^([\d.,]+)\s+(.+?)\s+(\d{4})$/.exec(top1.n || '');
++
+     app.innerHTML =
+       '<section class="wrap hero">' +
+-        '<h1>' + esc(hero.n) + (isMother ? ' is the mother of the heaviest pumpkin ever weighed' : ' is the heaviest pumpkin ever weighed') + '</h1>' +
+-        '<div><p class="lead">Growers name a pumpkin for its weight, its grower and its year. This one weighed ' + num(hero.w) + ' lb, and ' + esc(grower(hero)) + ' grew it in ' + esc(placeLong(hero)) + ' in ' + hero.y + '.' +
+-          (isMother ? ' ' + when + ' one of its seeds grew <a href="#/fruit/' + top1.i + '">' + esc(top1.n) + '</a>, the ' + wTxt(top1) + ' world record.' : '') + '</p>' +
+-          '<form class="lookup" role="search" id="lookup"><label for="lq">Look up any pumpkin’s family</label><div class="row"><input id="lq" type="search" placeholder="Try 2365 Wolf 2021" autocomplete="off"><button class="btn" type="submit">Search</button></div></form>' +
+-        '</div>' +
++        '<h1>Giant pumpkin family trees</h1>' +
++        '<p class="lead">Look up any pumpkin in the official weigh-off results back to ' + meta.years[0] + ' and see its parents, grandparents and further back.</p>' +
++        '<form class="lookup" role="search" id="lookup"><label for="lq">Find a pumpkin or a grower</label><div class="row"><input id="lq" type="search" placeholder="Try 2365 Wolf 2021 or Stelts" autocomplete="off"><button class="btn" type="submit">Search</button></div></form>' +
++      '</section>' +
++      '<section class="wrap home-tree"><div id="homeFan"></div>' +
++        '<div class="tree-cap"><p>' + (isMother
++          ? (recThisYear ? 'Behind this year’s world record: ' : 'Behind the world record: ') + '<a href="#/fruit/' + top1.i + '">' + esc(top1.n) + '</a> grew from a seed of <a href="#/fruit/' + hero.i + '">' + esc(hero.n) + '</a>, the pumpkin at the center.'
++          : 'At the center: <a href="#/fruit/' + hero.i + '">' + esc(hero.n) + '</a>, the heaviest pumpkin ever weighed.') + '</p>' +
++          '<a class="btn" href="#/tree/' + hero.i + '">Open the full tree</a></div>' +
+       '</section>' +
+-      '<section class="wrap home-tree"><h2 class="phone-h">Its family tree</h2><div id="homeFan"></div><div class="home-key" id="homeKey"></div></section>' +
+-      '<section class="wrap sec" style="margin-top:96px">' +
+-        '<h2 style="max-width:900px">' + (fromSeed ? fromSeed + ' of ' + yearsWord + ' 100 heaviest pumpkins grew from its seeds' : 'The 100 heaviest pumpkins of ' + year) + '</h2>' +
+-        '<p class="soft measure" style="margin-top:10px">Each square is one of the 100 heaviest pumpkins weighed in ' + year + ', numbered from the heaviest down.' + (fromSeed ? ' The orange ones grew from a ' + esc(hero.n) + ' seed.' : '') + '</p>' +
+-        '<div class="squares" role="img" aria-label="The 100 heaviest pumpkins of ' + year + '. ' + fromSeed + ' grew from a ' + esc(hero.n) + ' seed.">' +
+-          rows.map((r, i) => '<div class="sq' + (r.sid === hero.i ? ' on' : '') + '" title="' + esc(r.n) + '">' + (i + 1) + '</div>').join('') + '</div>' +
++      '<section class="wrap home-cards">' +
++        (parts ? '<div class="card anat"><div class="nm">' +
++          '<div class="pt w"><b>' + esc(parts[1]) + '</b><span>Weight in pounds</span></div>' +
++          '<div class="pt"><b>' + esc(parts[2]) + '</b><span>Grower</span></div>' +
++          '<div class="pt"><b>' + esc(parts[3]) + '</b><span>Year weighed</span></div></div>' +
++          '<p>Pumpkins are named this way. ' + esc(top1.n) + ' is the heaviest pumpkin ever weighed' + (isMother ? ', and its mother, ' + esc(hero.n) + ', is at the center of the tree above.' : ', and it’s at the center of the tree above.') + '</p></div>' : '') +
++        '<div class="card read"><h3>Reading the tree</h3>' +
++          '<p class="tree-rings">The pumpkin sits at the center. Its two parents are in the first ring, its four grandparents in the second<span class="rings3"> and its eight great-grandparents in the third</span>.</p>' +
++          '<p><span class="sw" style="background:var(--mother)"></span>Orange is a mother, the pumpkin whose seed was planted.</p>' +
++          '<p><span class="sw" style="background:var(--father)"></span>Green is a father, the pumpkin whose pollen was used.</p>' +
++          '<p>A deeper color means a heavier pumpkin.</p>' +
++          '<p class="rings3"><span class="dotk"></span>A dot marks a pumpkin that appears more than once.</p></div>' +
++      '</section>' +
++      '<section class="wrap sec seeds">' +
++        (topSeed
++          ? '<h2>Top seed for ' + year + '</h2>' +
++            '<p class="lead seed-line">' + topSeed.n + ' of the 100 heaviest pumpkins in ' + year + ' were grown from the ' + esc(seedName(topSeed)) + ' seed.</p>' +
++            '<div class="sq-key">' + mothers.map((t, k) => '<button type="button" class="seed-chip" aria-pressed="false" data-s="' + k + '" style="--c:' + SEED_COLORS[k] + '"><i class="sq-sw"></i><span>' + esc(seedName(t)) + '</span><b>' + t.n + '</b></button>').join('') + '</div>' +
++            '<p class="mut sq-note">Each square is one of the 100 heaviest, numbered from the heaviest down.</p>'
++          : '<h2>The 100 heaviest pumpkins of ' + year + '</h2><p class="soft measure" style="margin-top:10px">Each square is one of the 100 heaviest pumpkins weighed in ' + year + ', numbered from the heaviest down.</p>') +
++        '<div class="squares" role="img" aria-label="The 100 heaviest pumpkins of ' + year + '.' + (mothers.length ? ' ' + mothers.map((t) => t.n + ' grew from the ' + esc(seedName(t)) + ' seed').join(', ') + '.' : '') + '">' +
++          rows.map((r, i) => { const k = seedOf.get(r.sid); return k == null
++            ? '<div class="sq" title="' + esc(r.n) + '">' + (i + 1) + '</div>'
++            : '<div class="sq s" data-s="' + k + '" style="--c:' + SEED_COLORS[k] + '" title="' + esc(r.n + ', grown from the ' + seedName(mothers[k]) + ' seed') + '">' + (i + 1) + '</div>'; }).join('') + '</div>' +
+         '<div class="two">' +
+           '<div><h3>Mothers of ' + yearsWord + ' 100 heaviest</h3><table style="margin-top:8px"><thead><tr><th>Mother</th><th>Grown by</th><th class="r">Of the 100 heaviest</th></tr></thead><tbody>' +
+-            mothers.map((t) => '<tr><td><a href="#/fruit/' + t.id + '" data-mname="' + t.id + '">' + esc(t.id === hero.i ? hero.n : t.raw) + '</a></td><td class="mut" data-mgrower="' + t.id + '">' + (t.id === hero.i ? esc(grower(hero)) : '') + '</td><td class="r w">' + t.n + '</td></tr>').join('') +
++            mothers.map((t, k) => '<tr data-s="' + k + '" style="--c:' + SEED_COLORS[k] + '"><td><i class="sq-sw"></i><a href="#/fruit/' + t.id + '" data-mname="' + t.id + '">' + esc(t.id === hero.i ? hero.n : t.raw) + '</a></td><td class="mut" data-mgrower="' + t.id + '">' + (t.id === hero.i ? esc(grower(hero)) : '') + '</td><td class="r w">' + t.n + '</td></tr>').join('') +
+           '</tbody></table></div>' +
+           '<div class="card"><h3>New to giant pumpkins?</h3>' +
+             '<p>Every fall, growers bring their biggest pumpkins to contests called weigh-offs, where each one is weighed on a certified scale. The results go into one public list that runs back to ' + meta.years[0] + '. Everything on this site comes from that list.</p>' +
+@@ -227,28 +258,35 @@
+     app.querySelector('#lookup').addEventListener('submit', (e) => {
+       e.preventDefault();
+       const v = app.querySelector('#lq').value.trim();
+-      location.hash = v ? '#/trees?q=' + encodeURIComponent(v) : '#/trees';
++      location.hash = v ? '#/search/' + encodeURIComponent(v) : '#/trees';
+     });
+ 
+     // The fan: three generations, two on a phone.
+     const host = app.querySelector('#homeFan');
+-    const key = app.querySelector('#homeKey');
+     const fan = Fan.create(host, { gens: isPhone() ? 2 : 3, maxGens: 3, href: (id) => '#/tree/' + id, rootHref: (id) => '#/tree/' + id,
+       label: (m, G) => 'Family tree of ' + m.root.f.n + ', ' + ['', 'parents', 'parents and grandparents', 'three generations'][G] });
+-    const drawKey = () => {
+-      const phone = isPhone();
+-      key.innerHTML = '<h2>Its family tree</h2>' +
+-        (phone ? '' : '<p class="first">The pumpkin sits at the center. Its two parents are in the first ring, its four grandparents in the second and its eight great-grandparents in the third.</p>') +
+-        '<p><span class="sw" style="background:var(--mother)"></span>' + (phone ? 'Mother, whose seed was planted' : 'Orange is a mother, the pumpkin whose seed was planted.') + '</p>' +
+-        '<p><span class="sw" style="background:var(--father)"></span>' + (phone ? 'Father, whose pollen was used' : 'Green is a father, the pumpkin whose pollen was used.') + '</p>' +
+-        (phone ? '<p class="mut">Parents are in the first ring and grandparents in the second. A deeper color means a heavier pumpkin.</p>'
+-          : '<p>A deeper color means a heavier pumpkin.</p><p><span class="dotk"></span>A dot marks a pumpkin that appears more than once.</p>') +
+-        '<div class="cta"><a class="btn" href="#/tree/' + hero.i + '">Open the full tree</a></div>';
+-    };
+-    drawKey();
+     fan.setData(N, hero.i);
+     disposers.push(() => fan.destroy());
+-    onBreakpoint((phone) => { fan.setGens(phone ? 2 : 3); drawKey(); });
++    onBreakpoint((phone) => { fan.setGens(phone ? 2 : 3); });
++
++    // Pointing at a seed (its button, its row in the mothers table, or one of its squares) picks out its pumpkins on the grid.
++    const grid = app.querySelector('.squares');
++    let pinned = null;
++    const pick = (k) => {
++      if (!grid) return;
++      grid.classList.toggle('hl', k != null);
++      app.querySelectorAll('.sq.s, .seed-chip, tr[data-s]').forEach((el) => el.classList.toggle('pick', k != null && el.dataset.s === k));
++      app.querySelectorAll('.seed-chip').forEach((el) => el.setAttribute('aria-pressed', String(pinned === el.dataset.s)));
++    };
++    app.querySelectorAll('.sq.s, .seed-chip, tr[data-s]').forEach((el) => {
++      el.addEventListener('mouseenter', () => pick(el.dataset.s));
++      el.addEventListener('mouseleave', () => pick(pinned));
++    });
++    app.querySelectorAll('.seed-chip').forEach((el) => {
++      el.addEventListener('focus', () => pick(el.dataset.s));
++      el.addEventListener('blur', () => pick(pinned));
++      el.addEventListener('click', () => { pinned = pinned === el.dataset.s ? null : el.dataset.s; pick(pinned); });
++    });
+ 
+     // Fill in who grew each mother, and the biggest of each other crop, once the page is up.
+     mothers.filter((t) => t.id !== hero.i).forEach((t) => {
+--- live/assets/styles.css	2026-11-22 22:30:58.852840799 +0000
++++ work/assets/styles.css	2026-11-22 23:25:54.082888424 +0000
+@@ -112,20 +112,44 @@
+ .qk { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; background: var(--head); color: var(--ink); font-size: 11px; font-weight: 800; margin-right: 8px; vertical-align: 1px; }
+ 
+ /* Home */
+-.hero { padding-top: 54px; display: grid; grid-template-columns: 7fr 5fr; gap: 64px; align-items: end; }
++.hero { padding-top: 56px; max-width: 860px; text-align: center; }
++.hero h1 { font-size: 56px; }
++.hero .lead { max-width: 640px; margin: 16px auto 0; }
++.hero .lookup { max-width: 640px; margin: 26px auto 0; text-align: left; }
+ .lookup { margin-top: 22px; }
+ .lookup label { display: block; font-weight: 600; margin-bottom: 6px; }
+ .lookup input, .lookup .btn { height: 48px; }
+-.home-tree { margin-top: 44px; display: grid; grid-template-columns: minmax(0, 1040px) minmax(200px, 1fr); gap: 36px; align-items: end; }
+-.phone-h { display: none; }
+-.home-key { padding-bottom: 10px; }
+-.home-key h2 { font-size: 28px; }
+-.home-key p { margin-top: 8px; }
+-.home-key p.first { margin-top: 10px; color: var(--soft); }
+-.home-key .btn { margin-top: 20px; }
+-.squares { margin-top: 26px; display: grid; grid-template-columns: repeat(25, minmax(0, 44px)); gap: 6px; }
+-.sq { aspect-ratio: 1; border-radius: 4px; background: #2A211B; color: #A99A86; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; }
+-.sq.on { background: var(--btn); color: var(--ink); box-shadow: 0 2px 0 rgba(0,0,0,.5), 0 6px 12px rgba(0,0,0,.45); }
++.home-tree { margin-top: 36px; }
++.home-tree #homeFan, .tree-cap, .home-cards { max-width: 1040px; margin-left: auto; margin-right: auto; }
++.tree-cap { margin-top: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px 32px; color: var(--soft); }
++.tree-cap p { max-width: 660px; }
++.tree-cap .btn { flex: none; }
++.home-cards { margin-top: 40px; display: grid; grid-template-columns: 7fr 5fr; gap: 24px; align-items: stretch; }
++.home-cards .card { padding: 26px 28px; }
++.anat .nm { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
++.anat .pt { display: flex; flex-direction: column; gap: 8px; }
++.anat .pt b { font-family: var(--serif); font-weight: 800; font-size: 52px; line-height: 1; letter-spacing: -0.02em; color: var(--head); padding-bottom: 10px; border-bottom: 2px solid var(--line-2); }
++.anat .pt.w b { border-color: var(--mother); }
++.anat .pt span { font-size: 14px; color: var(--mut); }
++.anat > p { margin-top: 22px; color: var(--soft); }
++.read p { margin-top: 8px; }
++.read .tree-rings { margin-top: 10px; color: var(--soft); }
++.seed-line { margin-top: 10px; max-width: 900px; }
++.sq-key { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
++.seed-chip { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 12px; font: inherit; font-size: 15px; color: var(--text); background: transparent; border: 1px solid var(--line-2); border-radius: 8px; cursor: pointer; transition: background-color .15s ease, border-color .15s ease; }
++.seed-chip b { color: var(--mut); font-weight: 600; font-variant-numeric: tabular-nums; }
++.seed-chip:hover, .seed-chip.pick { background: #2A211B; border-color: var(--c); }
++.seed-chip[aria-pressed="true"] { border-color: var(--c); box-shadow: inset 0 0 0 1px var(--c); }
++.sq-sw { width: 14px; height: 14px; border-radius: 3px; display: inline-block; background: var(--c); flex: none; }
++.sq-note { margin-top: 12px; font-size: 15px; }
++.squares { margin-top: 18px; display: grid; grid-template-columns: repeat(25, minmax(0, 44px)); gap: 6px; }
++.sq { aspect-ratio: 1; border-radius: 4px; background: #2A211B; color: #A99A86; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; transition: opacity .15s ease, filter .15s ease; }
++.sq.s { background: var(--c); color: var(--ink); cursor: default; }
++.squares.hl .sq { opacity: .22; }
++.squares.hl .sq.pick { opacity: 1; filter: saturate(1.3) brightness(.82); box-shadow: 0 0 0 2px var(--head); font-weight: 800; }
++td .sq-sw { margin-right: 10px; vertical-align: -1px; }
++tr[data-s] td { transition: background-color .15s ease; }
++tr[data-s].pick td { background: #211A15; }
+ .two { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+ .two .card { padding: 24px 26px; align-self: start; }
+ .two .card p { margin-top: 10px; color: var(--soft); }
+@@ -279,11 +303,9 @@
+   .hdr .wrap { gap: 24px; }
+   .nav { gap: 20px; }
+   .nav .long { display: none; }
+-  .hero { grid-template-columns: 1fr; gap: 20px; padding-top: 40px; }
+-  .home-tree { grid-template-columns: 1fr; gap: 20px; }
+-  .home-key { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 32px; padding-bottom: 0; }
+-  .home-key h2, .home-key p.first, .home-key .cta { grid-column: 1 / -1; }
+-  .home-key p { margin-top: 4px; }
++  .hero { padding-top: 40px; }
++  .hero h1 { font-size: 46px; }
++  .home-cards { grid-template-columns: 1fr; }
+   .squares { grid-template-columns: repeat(20, minmax(0, 44px)); gap: 5px; }
+   .sq { font-size: 12px; }
+   .two { grid-template-columns: 1fr; gap: 36px; }
+@@ -312,14 +334,20 @@
+   .nav, .hsearch { display: none; }
+   .menu-btn { display: flex; }
+   .sec { margin-top: 44px; }
+-  .hero { padding-top: 26px; gap: 12px; }
++  .hero { padding-top: 26px; text-align: left; }
++  .hero h1 { font-size: 36px; }
++  .hero .lead { margin: 12px 0 0; }
++  .hero .lookup { margin: 18px 0 0; }
+   .lookup { margin-top: 18px; }
+-  .home-tree { margin-top: 30px; gap: 10px; }
+-  .home-tree .home-key { display: block; }
+-  .home-tree .phone-h { display: block; }
+-  .home-key h2 { display: none; }
+-  .home-key p { font-size: 15px; margin-top: 6px; }
+-  .home-key .btn { width: 100%; height: 48px; margin-top: 14px; }
++  .home-tree { margin-top: 28px; }
++  .tree-cap { flex-direction: column; align-items: stretch; font-size: 15px; }
++  .tree-cap .btn { width: 100%; height: 48px; }
++  .home-cards { margin-top: 28px; gap: 16px; }
++  .home-cards .card { padding: 20px 18px; }
++  .rings3 { display: none; }
++  .anat .nm { gap: 12px; flex-wrap: nowrap; }
++  .anat .pt b { font-size: 30px; }
++  .read p { font-size: 15px; }
+   .squares { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px; margin-top: 16px; }
+   .two { margin-top: 30px; gap: 28px; }
+   .two .card { padding: 18px 18px; }
