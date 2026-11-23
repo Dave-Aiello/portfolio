@@ -28,8 +28,8 @@
       <h1>The Main Vine</h1>
       <p class="lede">Giant pumpkin growers compete to grow the heaviest pumpkin, and they pick their seeds by studying a plant’s family history, the way dog or horse breeders do. The official results record each pumpkin’s parents, but only as typed-in names, so following a family back meant looking up one name at a time. The Main Vine connects every result since 2005 into family trees you can search and click through.</p>
       <div class="actions">
-        <a class="button" href="https://the-main-vine.vercel.app/">Visit the site</a>
-        <a class="button secondary" href="https://the-main-vine.vercel.app/#/fruit/35586">Open a family tree</a>
+        <a class="button" href="https://themainvine.com/">Visit the site</a>
+        <a class="button secondary" href="https://themainvine.com/#/tree/31896">Open a family tree</a>
       </div>
       <dl class="facts-row">
         <div><dt>Type</dt><dd>Personal project, 2026</dd></div>
@@ -42,8 +42,8 @@
     <section class="section">
       <div class="wrap">
         <figure class="dev-figure">
-          <img src="/development/img/vine-home.webp" alt="The Main Vine home page: a headline about every GPC fruit and cross, the heaviest pumpkin ever at 3,156 lb, and a table of the biggest of all time." width="1600" height="1000" loading="lazy" decoding="async">
-          <figcaption>The home page shows the heaviest pumpkin ever weighed and the all-time top list.</figcaption>
+          <img src="/development/img/vine-fan-home.webp" alt="The Main Vine home page: the headline Giant pumpkin family trees, a search box for any pumpkin or grower, and the top of a fan-shaped family tree." width="1600" height="1000" loading="lazy" decoding="async">
+          <figcaption>The home page leads with search and a family tree.</figcaption>
         </figure>
       </div>
     </section>
@@ -74,7 +74,7 @@
         <p>A script loads the published results into a Postgres database. Then each parent’s name is matched to a real, weighed pumpkin by its weight, the grower’s last name and the year, allowing for small typos and missing years.</p>
         <ul>
           <li>A name that fits exactly one pumpkin becomes a link.</li>
-          <li>A name that fits several is shown as “needs review,” with every candidate, and drawn with a dashed line in the tree.</li>
+          <li>A name that fits several is shown as typed, with every candidate listed, and marked with a question mark in the tree.</li>
           <li>A name that isn’t found, because the pumpkin is older than 2005 or was never weighed at an official contest, stays as plain text.</li>
         </ul>
         <p>For the father, the site looks at the same grower’s other pumpkins that season. If exactly one of them grew from the father’s seed, it’s almost certainly the plant the pollen came from, so the tree shows what that plant grew. The site says plainly that these are strong guesses, not certainties.</p>
@@ -84,36 +84,23 @@
     <section class="section">
       <div class="wrap prose">
         <h2>The family tree</h2>
-        <p>The family tree is the main part of the site, and I drew it without a charting library. Each pumpkin is a real HTML card with links and buttons, positioned absolutely; the connecting lines are thin elements placed from the same coordinates.</p>
+        <p>The family tree is the main part of the site, and I drew it as one SVG without a charting library. The pumpkin sits at the center. Its mother, the seed it grew from, takes the left half of each ring, and its father, the plant that pollinated it, takes the right half, one ring per generation.</p>
         <figure class="dev-figure">
-          <img src="/development/img/vine-ped.webp" alt="Pedigree of 3156 Wallace 2026, three generations back, with seed and pollinator cards, what each pollinator plant grew, and a side panel for the selected fruit." width="1600" height="831" loading="lazy" decoding="async">
-          <figcaption>The family tree of the heaviest pumpkin on record. Each card shows the weight, a tape measurement of the pumpkin’s size, and how much heavier or lighter it was than that size usually predicts.</figcaption>
+          <img src="/development/img/vine-fan-tree.webp" alt="Fan-shaped family tree of 2731.5 Stelts 2024, four generations back, with mothers in orange, fathers in green and two ancestors not on record." width="1600" height="961" loading="lazy" decoding="async">
+          <figcaption>The family tree of 2731.5 Stelts 2024, the mother of the heaviest pumpkin on record. Mothers are orange, fathers are green, and a deeper color means a heavier pumpkin.</figcaption>
         </figure>
-        <p>The layout is one recursive pass. Parents are placed first, top to bottom, and each pumpkin is then centered on its first and last parent, so the tree never overlaps however unevenly it branches:</p>
-        <pre tabindex="0"><code>const place = (n, top) =&gt; {
-  n.h = heightOf(n);
-  n.x = colX(n.gen);
-  if (n.gen &gt; maxGen) maxGen = n.gen;
-  const gap = isCompact(n) ? CGAP : GAP;
-  let bottom;
-  if (!n.kids.length) { n.y = top; bottom = top + n.h + gap; }
-  else {
-    let t = top;
-    n.kids.forEach((k) =&gt; { t = place(k, t); });
-    const first = n.kids[0], last = n.kids[n.kids.length - 1];
-    const mid = ((first.y + anchorOf(first)) + (last.y + anchorOf(last))) / 2;
-    n.y = Math.max(top, mid - anchorOf(n));
-    bottom = Math.max(t, n.y + n.h + gap);
-  }
-  flat.push(n);
-  return bottom;
-};</code></pre>
+        <p>Every place in the tree is a ring segment. A pumpkin in generation <code>g</code> gets 1/2<sup>g</sup> of the half circle, so its angles come straight from its position in the tree:</p>
+        <pre tabindex="0"><code>function slotGeo(s) {
+  if (s.gen === 0) return { ri: 0, ro: geo.r[0], a0: 0, a1: Math.PI };
+  const span = Math.PI / Math.pow(2, s.gen);
+  return { ri: geo.r[s.gen - 1], ro: geo.r[s.gen], a0: s.idx * span, a1: (s.idx + 1) * span };
+}</code></pre>
         <ul>
-          <li>Show 2 to 8 generations, or open and close any branch on its own.</li>
-          <li>Fold repeated ancestors: a famous seed that appears many times in a tree is drawn once and marked ×N.</li>
-          <li>From the fourth generation back, cards shrink to one line, so a deep tree stays readable.</li>
-          <li>Two ways to show what each father plant grew. The choice is saved in <code>localStorage</code>.</li>
-          <li>Drag the empty part of the tree to move around it, like a map. Pointer Events with pointer capture keep the drag smooth, and buttons and links inside the tree still work.</li>
+          <li>Show 2 to 5 generations, or up to 4 on a phone. The fan opens one ring at a time, and a generation folds away when you show fewer.</li>
+          <li>Each name is sized to the room its segment has. A narrow segment falls back to a shorter name, like the weight and grower, or just the weight.</li>
+          <li>Point at a pumpkin, or tap it, to light up its line back to the center. Click it, or tap it a second time, to put it at the center.</li>
+          <li>A pumpkin that appears more than once in a tree is marked with a dot, and pointing at it lifts it in every place it appears.</li>
+          <li>With reduced motion turned on, the fan appears fully open.</li>
         </ul>
       </div>
     </section>
@@ -156,14 +143,14 @@
     <section class="section">
       <div class="wrap prose">
         <h2>On a phone</h2>
-        <p>Wide tables and the tree scroll inside their own panels, so the page itself never scrolls sideways at phone width.</p>
+        <p>On a phone the fan gives more of its room to the inner rings, so their names stay readable, and wide tables scroll inside their own panels.</p>
         <div class="phone-pair">
         <figure class="dev-figure">
-          <img src="/development/img/vine-phone-home.webp" alt="The Main Vine home page on a phone, with the headline, search and the heaviest pumpkin card." width="780" height="1688" loading="lazy" decoding="async">
+          <img src="/development/img/vine-fan-phone-home.webp" alt="The Main Vine home page on a phone, with the headline, search and a small family tree." width="780" height="1688" loading="lazy" decoding="async">
           <figcaption>Home</figcaption>
         </figure>
         <figure class="dev-figure">
-          <img src="/development/img/vine-phone-fruit.webp" alt="A fruit page on a phone with weight, OTT, chart comparison, inbreeding and ancestors on record." width="780" height="1688" loading="lazy" decoding="async">
+          <img src="/development/img/vine-fan-phone-tree.webp" alt="The page for 3156 Wallace 2026 on a phone, with its fan-shaped family tree four generations back." width="780" height="1688" loading="lazy" decoding="async">
           <figcaption>A pumpkin’s page</figcaption>
         </figure>
         </div>
